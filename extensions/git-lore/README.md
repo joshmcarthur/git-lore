@@ -23,9 +23,17 @@ Flags for `serve`: `--repo <path>`, `--addr host:port` (default
 
 ## Screenshots
 
-Placeholder page until the Vue UI PR lands:
+Work detail (document + history):
 
-![Placeholder serve page](docs/screenshots/serve-placeholder.png)
+![Work detail](docs/screenshots/serve-work-detail.png)
+
+Commit diff:
+
+![Commit diff](docs/screenshots/serve-commit-diff.png)
+
+Works sidebar:
+
+![Works sidebar](docs/screenshots/serve-works-sidebar.png)
 
 ## Commands
 
