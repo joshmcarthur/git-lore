@@ -19,6 +19,12 @@ make build
 Flags for `serve`: `--repo <path>`, `--addr host:port` (default
 `127.0.0.1:9473`), `--open`.
 
+## Screenshots
+
+Placeholder page until the Vue UI PR lands:
+
+![Placeholder serve page](docs/screenshots/serve-placeholder.png)
+
 ## Commands
 
 | Command | Status | Purpose |
