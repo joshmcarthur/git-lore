@@ -23,11 +23,20 @@ prefer recording superseding decisions over removing old ones.
 Open: whether explicit deletion workflow or guidance is needed when Lore
 content is genuinely wrong (not merely outdated).
 
-## Diverged lore refs
+## Diverged lore refs (partially resolved)
 
-If local and remote lore histories diverge, edit-lore does not merge them.
-sync-lore era problem. Record friction when encountered; do not solve in
-edit-lore spec until sync-lore exists.
+edit-lore still does not merge diverged histories automatically. sync-lore
+now documents how to handle divergence:
+
+- **Detection** — status mode compares local and remote lore refs
+- **Side-ref workflow** — remote tip held at `refs/lore/<id>-remote` while
+  local stays at `refs/lore/<id>`
+- **Reconciliation** — manual: inspect both histories, curate merged outcome
+  with edit-lore, then push
+
+See `refs/lore/sync-lore:spec.md` and `refs/lore/sync-lore:decisions.md`.
+Open: whether sync-lore should grow assisted merge tooling beyond documenting
+the manual path.
 
 ## handoff.md vs read-time summaries
 
