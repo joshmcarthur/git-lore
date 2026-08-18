@@ -6,6 +6,10 @@ Write README.md for git-lore: explain the project, dogfooding story, mental
 model, skills, and technical model. Use actual Lore refs as evidence; do not
 invent history.
 
+## Status
+
+**Done.** README.md written.
+
 ## Scope
 
 In scope:
@@ -20,8 +24,13 @@ Out of scope:
 - Large Lore dumps in README
 - Marketing tone or unproven claims
 
+## What was delivered
+
+- README.md with dogfooding narrative, mental model, skills, curation guidance,
+  technical model, Markdown vs Lore, Git Notes distinction, getting started
+- Lore excerpts from git-lore, edit-lore, read-lore with git show attribution
+- Links to all four skill SKILL.md files and protocol.md
+
 ## Next steps
 
-1. Inspect all Lore refs and select strongest excerpts
-2. Write README.md
-3. Update refs/lore/git-lore plan status when README is done
+- Commit README.md to source branch
