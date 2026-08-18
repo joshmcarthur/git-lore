@@ -22,10 +22,16 @@ jobs:
         with:
           go-version: "1.23.x"
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: extensions/git-lore/web/package-lock.json
+
       - name: Test Go
         run: make test
 
-      - name: Build binary
+      - name: Build web + binary
         run: make build
 
       - name: Smoke CLI + API
