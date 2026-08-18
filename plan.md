@@ -13,8 +13,7 @@ read-lore, and edit-lore all defer remote transport to this skill.
 
 ## Status
 
-**In progress.** Lore Work created; `skills/sync-lore/SKILL.md` not yet
-written.
+**Done.** `skills/sync-lore/SKILL.md` implemented per spec.
 
 ## What we're trying to prove
 
@@ -58,7 +57,6 @@ A fresh agent with only sync-lore and no conversational history should be able t
 
 ## Next steps
 
-1. Write `skills/sync-lore/SKILL.md` per spec.md in this Lore Work
-2. Dogfood: push all four skill lore refs when a remote exists
-3. Update `refs/lore/git-lore` plan status when sync-lore is done
-4. Smoke test clone + fetch in temp directory
+1. Dogfood: push lore refs when a remote exists
+2. Smoke test clone + fetch in a temp directory
+3. Update `refs/lore/git-lore` plan to reflect sync-lore complete
