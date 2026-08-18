@@ -57,6 +57,14 @@ Too much:
 
     Lore becomes noisy.
 
+**Partially addressed** by edit-lore spec (`refs/lore/edit-lore:spec.md`):
+
+- Mandatory curation gate before any write
+- Explicit edit-lore invocation (no automatic background updates)
+- Batch meaningful curation, not per-turn activity
+
+**Still open:** whether agents should proactively suggest edit-lore when durable conclusions emerge during implementation. See `refs/lore/edit-lore:questions.md`.
+
 This is probably the most important UX question.
 
 ## Does the lack of a CLI become painful?
