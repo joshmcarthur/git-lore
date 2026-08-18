@@ -59,3 +59,9 @@
 **Decision:** Cross-compile `git-lore` in the existing release-please workflow (`release-binaries` job) and upload archives to the GitHub Release for that tag.
 
 **Why:** One version (`version.txt` / `v*`) covers skills and CLI. Avoids maintaining a second release pipeline. `make dist` is the local equivalent.
+
+## Ship as stacked PRs (backend then frontend)
+
+**Decision:** Close the monolithic PR (#4) and land as two stacked PRs: (1) Go CLI + lore API with a plain HTML placeholder for `go:embed`, (2) Vue SPA + Vite/`webdist` pipeline + release-please binary uploads.
+
+**Why:** A single PR mixing Go API, Vue UI, CI, and release wiring is hard to review. Backend is reviewable and buildable without Node; frontend depends on the API. Stacking matches the real dependency (`go:embed` needs *something* until Vite lands).

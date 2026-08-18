@@ -2,22 +2,23 @@
 
 ## What
 
-Optional `git-lore` CLI under `extensions/git-lore/`. First command: `serve` (embedded Vue Lore browser, read + fetch). Release-please uploads cross-platform archives on each GitHub Release.
+Optional `git-lore` CLI under `extensions/git-lore/`. Full implementation exists on `feat/git-lore-cli` (and `origin/feat/git-lore-cli`). Monolithic PR https://github.com/joshmcarthur/git-lore/pull/4 was **closed** to split review.
 
-## Why
+## Why split
 
-Skills remain primary. The CLI is for humans who prefer commands; `serve` proves browsing without agent skills. Same Git conventions as the skills (`os/exec` to `git`).
+Backend (Go API/CLI) and frontend (Vue + release binary job) are separately reviewable. `go:embed` needs a placeholder until Vite `webdist` lands.
 
-## Decided
+## Approved stack (not executed yet)
 
-- Live under `extensions/`, not repo root
-- Binary name `git-lore`; UI command `serve` only
-- Read-only serve UI; writes stay skill-driven for now
-- Gitignore `webdist`; `make build` / `make dist` regenerate
-- Release binaries via release-please follow-on job (not separate goreleaser)
+1. **PR1 → main:** Go CLI + `internal/git` + API + `serve` with committed plain HTML placeholder; Go-only CI/Makefile; no Vue; no release-please binary upload
+2. **PR2 → PR1:** `web/` Vue SPA, Makefile `web`/`dist`, release-please `release-binaries`, fuller CI + README
 
-## Next
+Backup: do not delete `feat/git-lore-cli` until the stack is open and verified.
 
-- Merge source PR
-- Sync lore refs if not already on origin
-- Later: `list` / `show` CLI before create/edit/sync
+## Decided (durable)
+
+See `decisions.md` — especially extensions/ layout, `serve` command name, gitignore webdist, release-please binaries, and stacked PRs.
+
+## Next agent action
+
+Execute the split: create PR1/PR2 branches from the backup commit, push, open PRs, leave `feat/git-lore-cli` intact.
