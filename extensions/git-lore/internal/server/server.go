@@ -13,7 +13,7 @@ import (
 //go:embed all:webdist
 var webDist embed.FS
 
-// New creates the root HTTP handler: API + embedded static UI.
+// New creates the root HTTP handler: API + embedded Vue SPA.
 func New(repo *loregit.Repo) (http.Handler, error) {
 	mux := http.NewServeMux()
 	apiHandler := &api.Handler{Repo: repo}
