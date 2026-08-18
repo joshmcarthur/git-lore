@@ -2,11 +2,11 @@
 
 ## Objective
 
-Build a standalone Go binary (`lore-explorer`) that serves an embedded Vue SPA for exploring local and remote Lore Works. The tool uses ordinary `git` commands — no libgit2, no lore files in the working tree — so humans can browse `refs/lore/*` the same way agents use read-lore and sync-lore.
+Build an optional standalone Go binary (`lore-explorer`) that serves an embedded Vue SPA for exploring local and remote Lore Works. The tool uses ordinary `git` commands — no libgit2, no lore files in the working tree — so humans can browse `refs/lore/*` the same way agents use read-lore and sync-lore.
 
 ## Status
 
-**Implemented.** `cmd/lore-explorer` embeds a Vue SPA and exposes a read-only HTTP API over `git` for listing Works, viewing documents, history/diffs, remote status, and fetch.
+**Implemented** as an extension under `extensions/lore-explorer/`. Repository root remains skills-first (`skills/`). The binary embeds a Vue SPA and exposes a read-only HTTP API over `git` for listing Works, viewing documents, history/diffs, remote status, and fetch.
 
 ## Scope
 
@@ -24,9 +24,19 @@ Build a standalone Go binary (`lore-explorer`) that serves an embedded Vue SPA f
 - Push lore refs
 - AI handoff synthesis (remains read-lore agent-side)
 - MCP server, hosted service, or database
+- Promoting the explorer to a first-class root-level product surface
+
+## Layout
+
+```
+extensions/lore-explorer/   # self-contained Go module + Vue app
+skills/                     # primary repository surface
+```
+
+Build: `cd extensions/lore-explorer && make build`
 
 ## Next steps
 
 1. Dogfood the UI against this repository's Lore Works
-2. Consider release binaries (goreleaser) if local `make build` proves useful
+2. Consider release binaries (goreleaser) only if the extension proves useful enough to distribute
 3. Revisit write/push UI only if skill-driven create/edit/sync remains painful
