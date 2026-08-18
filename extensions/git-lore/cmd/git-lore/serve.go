@@ -1,0 +1,67 @@
+package main
+
+import (
+	"flag"
+	"fmt"
+	"log"
+	"net"
+	"net/http"
+	"os"
+	"os/exec"
+	"runtime"
+	"time"
+
+	loregit "github.com/joshmcarthur/git-lore/extensions/git-lore/internal/git"
+	"github.com/joshmcarthur/git-lore/extensions/git-lore/internal/server"
+)
+
+func runServe(args []string) error {
+	fs := flag.NewFlagSet("serve", flag.ContinueOnError)
+	fs.SetOutput(os.Stderr)
+	repoPath := fs.String("repo", "", "path to git repository (default: current directory)")
+	addr := fs.String("addr", "127.0.0.1:9473", "HTTP listen address")
+	openBrowser := fs.Bool("open", false, "open the UI in the default browser")
+	if err := fs.Parse(args); err != nil {
+		return err
+	}
+
+	repo, err := loregit.Open(*repoPath)
+	if err != nil {
+		return err
+	}
+
+	handler, err := server.New(repo)
+	if err != nil {
+		return err
+	}
+
+	ln, err := net.Listen("tcp", *addr)
+	if err != nil {
+		return fmt.Errorf("listen %s: %w", *addr, err)
+	}
+
+	url := "http://" + *addr + "/"
+	log.Printf("git-lore serve %s at %s", repo.Root, url)
+
+	if *openBrowser {
+		go func() {
+			time.Sleep(200 * time.Millisecond)
+			_ = openURL(url)
+		}()
+	}
+
+	return http.Serve(ln, handler)
+}
+
+func openURL(url string) error {
+	var cmd *exec.Cmd
+	switch runtime.GOOS {
+	case "darwin":
+		cmd = exec.Command("open", url)
+	case "windows":
+		cmd = exec.Command("rundll32", "url.dll,FileProtocolHandler", url)
+	default:
+		cmd = exec.Command("xdg-open", url)
+	}
+	return cmd.Start()
+}
