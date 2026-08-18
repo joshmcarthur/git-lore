@@ -133,6 +133,5 @@ the protocol authority.
 
 ## Next steps
 
-1. Implement `skills/read-lore/SKILL.md` per `refs/lore/read-lore:spec.md`
-2. Dogfood read-lore against this Work and per-skill Lore Works
-3. Implement edit-lore and sync-lore
+1. Implement `skills/edit-lore/SKILL.md` and `skills/sync-lore/SKILL.md` per their Lore Works
+2. Dogfood edit-lore and sync-lore against this Work and per-skill Lore Works
