@@ -4,6 +4,10 @@
 
 Build a standalone Go binary (`lore-explorer`) that serves an embedded Vue SPA for exploring local and remote Lore Works. The tool uses ordinary `git` commands — no libgit2, no lore files in the working tree — so humans can browse `refs/lore/*` the same way agents use read-lore and sync-lore.
 
+## Status
+
+**Implemented.** `cmd/lore-explorer` embeds a Vue SPA and exposes a read-only HTTP API over `git` for listing Works, viewing documents, history/diffs, remote status, and fetch.
+
 ## Scope
 
 **In scope:**
@@ -23,7 +27,6 @@ Build a standalone Go binary (`lore-explorer`) that serves an embedded Vue SPA f
 
 ## Next steps
 
-1. Scaffold Go module, git wrapper, and HTTP API
-2. Build Vue SPA (works list, document viewer, history/diff)
-3. Add remote status + fetch endpoints
-4. Makefile embed pipeline, CI build, smoke test against this repo
+1. Dogfood the UI against this repository's Lore Works
+2. Consider release binaries (goreleaser) if local `make build` proves useful
+3. Revisit write/push UI only if skill-driven create/edit/sync remains painful
