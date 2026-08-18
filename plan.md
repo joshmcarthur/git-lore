@@ -2,41 +2,42 @@
 
 ## Objective
 
-Build an optional standalone Go binary (`lore-explorer`) that serves an embedded Vue SPA for exploring local and remote Lore Works. The tool uses ordinary `git` commands — no libgit2, no lore files in the working tree — so humans can browse `refs/lore/*` the same way agents use read-lore and sync-lore.
+Build an optional **`git-lore` CLI** that abstracts Lore operations (`refs/lore/*`) for people who prefer commands over agent skills. The first command is `explore`: an embedded Vue SPA for browsing local and remote Lore Works via ordinary `git`. Later commands can wrap create / read / edit / sync without requiring an agent.
 
 ## Status
 
-**Implemented** as an extension under `extensions/lore-explorer/`. Repository root remains skills-first (`skills/`). The binary embeds a Vue SPA and exposes a read-only HTTP API over `git` for listing Works, viewing documents, history/diffs, remote status, and fetch.
+**In progress — CLI shell + explore implemented.** Lives under `extensions/git-lore/`. Binary: `bin/git-lore`. Repository root remains skills-first.
 
 ## Scope
 
-**In scope:**
+**In scope (now):**
 
-- List local Lore Works and branch→work associations
-- View lore documents (Markdown) in read-lore priority order
-- Browse lore commit history and per-commit diffs
-- Remote status (synced / ahead / behind / diverged / local-only / remote-only)
-- Fetch lore refs from a remote (configure refspec if needed)
+- CLI entrypoint with subcommands (`explore`, `help`, `version`)
+- `explore`: list Works, Markdown view, history/diffs, remote status, fetch
 
-**Out of scope:**
+**In scope (later):**
 
-- Create or edit lore from the UI
-- Push lore refs
-- AI handoff synthesis (remains read-lore agent-side)
+- CLI counterparts to skill workflows (`list`, `show`, `create`, `edit`, `sync`, …)
+
+**Out of scope (for now):**
+
+- Create/edit/push from the explore UI
+- AI handoff synthesis
 - MCP server, hosted service, or database
-- Promoting the explorer to a first-class root-level product surface
+- Promoting the CLI to a first-class root-level product surface
 
 ## Layout
 
 ```
-extensions/lore-explorer/   # self-contained Go module + Vue app
-skills/                     # primary repository surface
+extensions/git-lore/   # self-contained Go module + Vue (explore UI)
+skills/                # primary repository surface
 ```
 
-Build: `cd extensions/lore-explorer && make build`
+Build: `cd extensions/git-lore && make build` → `bin/git-lore`
 
 ## Next steps
 
-1. Dogfood the UI against this repository's Lore Works
-2. Consider release binaries (goreleaser) only if the extension proves useful enough to distribute
-3. Revisit write/push UI only if skill-driven create/edit/sync remains painful
+1. Dogfood `git-lore explore` against this repository
+2. Add read-only CLI commands (`list`, `show`) before write commands
+3. Mirror skill semantics carefully when adding create/edit/sync
+4. Consider goreleaser only if distribution demand appears
