@@ -123,7 +123,7 @@ the project.
 |-------|--------|-----------|
 | create-lore | Done | `refs/lore/create-lore` |
 | read-lore | Done — `skills/read-lore/SKILL.md` | `refs/lore/read-lore` |
-| edit-lore | Not started | — |
+| edit-lore | Lore created — refs/lore/edit-lore; skills/edit-lore/SKILL.md not yet written | `refs/lore/edit-lore` |
 | sync-lore | Not started | — |
 | protocol reference | Done | `skills/protocol.md` |
 
@@ -133,5 +133,6 @@ the protocol authority.
 
 ## Next steps
 
-1. Implement `skills/edit-lore/SKILL.md` and `skills/sync-lore/SKILL.md` per their Lore Works
-2. Dogfood edit-lore and sync-lore against this Work and per-skill Lore Works
+1. Implement `skills/edit-lore/SKILL.md` first (per `refs/lore/edit-lore`)
+2. Implement `skills/sync-lore/SKILL.md` per its Lore Work
+3. Dogfood edit-lore and sync-lore against this Work and per-skill Lore Works
