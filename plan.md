@@ -12,8 +12,7 @@ a Work; read-lore consumes it; edit-lore maintains it.
 
 ## Status
 
-**In progress.** Lore Work created. `skills/edit-lore/SKILL.md` not yet
-written.
+**Done.** `skills/edit-lore/SKILL.md` implemented per spec.md.
 
 ## What we're trying to prove
 
@@ -71,7 +70,7 @@ per-skill Lore Works during implementation.
 
 ## Next steps
 
-1. Write `skills/edit-lore/SKILL.md` per spec.md in this Lore Work
-2. Dogfood: update `refs/lore/git-lore` plan status via edit-lore workflow
-3. Associate current branch via `git config branch.<name>.lore edit-lore`
-4. Smoke test in temp clone against a throwaway Work
+1. Commit `skills/edit-lore/SKILL.md` to the source branch
+2. Run sync-lore when a remote Lore Work exists
+3. Dogfood: update `refs/lore/git-lore` plan status via edit-lore workflow
+4. Associate current branch via `git config branch.<name>.lore edit-lore`
