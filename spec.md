@@ -144,37 +144,45 @@ do not commit per-line edits.
 
 ## Git workflow (temp work-tree)
 
-edit-lore uses a temporary directory as `GIT_WORK_TREE` to avoid touching
-the project working tree:
+edit-lore uses a temporary directory and **isolated index** to avoid touching
+the project working tree or the main Git index:
 
 ```bash
 WORK_ID=<work-id>
 REF="refs/lore/${WORK_ID}"
 COMMIT=$(git rev-parse "$REF")
 DIR=$(mktemp -d)
+INDEX=$(mktemp)
 GIT_DIR=$(git rev-parse --git-dir)
 
 # 1. Export current lore tree
-git --work-tree="$DIR" --git-dir="$GIT_DIR" checkout "$COMMIT" -- .
+git archive "$COMMIT" | tar -x -C "$DIR"
 
 # 2. Edit files in $DIR (agent applies curated changes)
 
-# 3. Build new tree and commit
-TREE=$(git --work-tree="$DIR" --git-dir="$GIT_DIR" add -A && \
-       git --work-tree="$DIR" write-tree)
+# 3. Build new tree using isolated index
+export GIT_INDEX_FILE="$INDEX"
+cd "$DIR"
+git --git-dir="$GIT_DIR" add -A .
+TREE=$(git --git-dir="$GIT_DIR" write-tree)
+unset GIT_INDEX_FILE
+
+# 4. Commit and update ref
 NEW=$(git commit-tree "$TREE" -p "$COMMIT" -m "lore: <what changed>")
 git update-ref "$REF" "$NEW"
 
-# 4. Cleanup
-rm -rf "$DIR"
+# 5. Cleanup
+rm -rf "$DIR" "$INDEX"
 ```
 
 Notes:
 
+- `GIT_INDEX_FILE` isolation is **required** — without it, `git add -A` in the
+  temp dir pollutes the main repository index
+- `git archive` exports without checkout, avoiding index side effects
 - `git add -A` in the temp dir stages creates, modifications, and deletions
-- File deletion in lore is supported but rare — only remove content that is
-  genuinely obsolete, not decisions that were superseded (record the new
-  decision instead)
+- File deletion in lore is supported but rare — prefer recording superseding
+  decisions over removing history
 - The lore ref must always point to a commit; do not create an empty tree
 
 ## Workflow checklist

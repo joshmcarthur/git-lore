@@ -44,3 +44,13 @@ etc.) only when the work produces content that fits. Same rule as create-lore
 but applied at edit time.
 
 Matches protocol decision: no fixed document taxonomy.
+
+## Isolated GIT_INDEX_FILE required for edits
+
+**Decision:** edit-lore must set `GIT_INDEX_FILE` to a temp file when
+building the new lore tree. Using `git --work-tree=<tmpdir> add -A` against
+the shared index pollutes the main repository index (stages lore blobs at
+repo root).
+
+Use `git archive` to export, isolated index + `git add -A` to stage, then
+`git write-tree`. Discovered during dogfooding git-lore Lore updates.
