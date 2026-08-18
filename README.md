@@ -99,13 +99,13 @@ Each skill was developed using the previous skill to create and maintain Lore fo
 
 | Stage | Source commit | Lore Work | Lore HEAD |
 |-------|---------------|-----------|-----------|
-| Protocol + bootstrap | — | [`refs/lore/git-lore`](https://github.com/joshmcarthur/git-lore/commit/d39214e39944d2bdbf012452d39ba3e8d55761e9) | `d39214e` |
-| create-lore | [`7ec772d`](https://github.com/joshmcarthur/git-lore/commit/7ec772d) | [`refs/lore/create-lore`](https://github.com/joshmcarthur/git-lore/commit/ee5791e5a1ad6774e4098c3eee8d463cfd7c9930) | `ee5791e` |
-| read-lore | [`1e85201`](https://github.com/joshmcarthur/git-lore/commit/1e85201) | [`refs/lore/read-lore`](https://github.com/joshmcarthur/git-lore/commit/1de52226bcefeab727430ced3c719f920251979f) | `1de5222` |
-| edit-lore | [`a791d0d`](https://github.com/joshmcarthur/git-lore/commit/a791d0d) | [`refs/lore/edit-lore`](https://github.com/joshmcarthur/git-lore/commit/86c2f8c4b06824ec09637c0a2f0dd9c1f9fd92b8) | `86c2f8c` |
-| sync-lore | [`3095a7b`](https://github.com/joshmcarthur/git-lore/commit/3095a7b) | [`refs/lore/sync-lore`](https://github.com/joshmcarthur/git-lore/commit/dcb7b8e5fdbc32e95b9241e52e391d85e0a95baa) | `dcb7b8e` |
+| Protocol + bootstrap | — | [`refs/lore/git-lore`](https://github.com/joshmcarthur/git-lore/tree/d39214e39944d2bdbf012452d39ba3e8d55761e9) | `d39214e` |
+| create-lore | [`7ec772d`](https://github.com/joshmcarthur/git-lore/commit/7ec772d) | [`refs/lore/create-lore`](https://github.com/joshmcarthur/git-lore/tree/ee5791e5a1ad6774e4098c3eee8d463cfd7c9930) | `ee5791e` |
+| read-lore | [`1e85201`](https://github.com/joshmcarthur/git-lore/commit/1e85201) | [`refs/lore/read-lore`](https://github.com/joshmcarthur/git-lore/tree/1de52226bcefeab727430ced3c719f920251979f) | `1de5222` |
+| edit-lore | [`a791d0d`](https://github.com/joshmcarthur/git-lore/commit/a791d0d) | [`refs/lore/edit-lore`](https://github.com/joshmcarthur/git-lore/tree/86c2f8c4b06824ec09637c0a2f0dd9c1f9fd92b8) | `86c2f8c` |
+| sync-lore | [`3095a7b`](https://github.com/joshmcarthur/git-lore/commit/3095a7b) | [`refs/lore/sync-lore`](https://github.com/joshmcarthur/git-lore/tree/dcb7b8e5fdbc32e95b9241e52e391d85e0a95baa) | `dcb7b8e` |
 
-Lore commit links browse the lore tree at that revision on GitHub (files live at the tree root, not under a source path). Lore refs do not appear in GitHub's branch picker — link by lore commit SHA.
+On GitHub, link lore by **tree** (`tree/<lore-commit-sha>`) to browse the file list — clearer than a commit page, which often shows only a status-update message. Lore files live at the tree root, not under a source path. Lore refs do not appear in GitHub's branch picker; use the lore commit SHA from `git log refs/lore/<work-id>`.
 
 ### Bootstrap: what we were trying to prove
 
@@ -354,7 +354,7 @@ git for-each-ref refs/lore --format='%(refname:short) %(objectname:short)'
 git show refs/lore/git-lore:plan.md
 ```
 
-On GitHub, lore is browsable by **lore commit SHA** (`blob/<sha>/plan.md`). Lore refs are not listed in the branch/tag picker, but each lore commit is a normal commit object once pushed. Link by SHA for permalinks; use `git log refs/lore/<work-id>` to find the current HEAD.
+On GitHub, browse lore with **`tree/<lore-commit-sha>`** to see the file list; use **`blob/<sha>/<file>`** to link to a specific document. Lore refs are not listed in the branch/tag picker, but each lore commit is a normal commit object once pushed.
 
 Skill files in the working tree:
 
