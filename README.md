@@ -486,14 +486,25 @@ What exists today:
 - Lore refs documenting the protocol and each skill's implementation
 - Dogfooding evidence that the workflow can carry context from one Work to the next
 - Automated releases via release-please (semver tags and GitHub Releases)
+- An optional **`git-lore` CLI** under [`extensions/git-lore`](extensions/git-lore) (API + `serve`; browser UI in a follow-up)
 
 What is deliberately **not** here (yet):
 
-- a daemon, database, hosted service, MCP server, or CLI
+- a daemon, database, hosted service, or MCP server
 - a manifest or transcript store
 - a GitHub App or formal marketplace submission (skills appear on [skills.sh](https://skills.sh) via `npx skills add` install telemetry)
 - automatic lore updates or AI summarisation pipelines
 
-That restraint is a feature. The project is trying to prove the workflow before building infrastructure around it.
+That restraint is a feature. The project is trying to prove the workflow before building infrastructure around it. The repository root stays skills-first; executables live under `extensions/`.
+
+### git-lore CLI (optional extension)
+
+```bash
+cd extensions/git-lore
+make build
+./bin/git-lore serve --repo ../.. --open
+```
+
+See [`extensions/git-lore/README.md`](extensions/git-lore/README.md).
 
 Success criterion (from [`refs/lore/git-lore` plan.md](https://github.com/joshmcarthur/git-lore/blob/d39214e39944d2bdbf012452d39ba3e8d55761e9/plan.md)): hand this repository to a fresh agent with no conversational history. If Lore makes it materially easier to explain what git-lore is, why it exists, what was decided, what was rejected, and what needs to happen next — the experiment is working.
