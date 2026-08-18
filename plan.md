@@ -122,7 +122,7 @@ the project.
 | Skill | Status | Lore Work |
 |-------|--------|-----------|
 | create-lore | Done | `refs/lore/create-lore` |
-| read-lore | Planned — spec in Lore | `refs/lore/read-lore` |
+| read-lore | Done — `skills/read-lore/SKILL.md` | `refs/lore/read-lore` |
 | edit-lore | Not started | — |
 | sync-lore | Not started | — |
 | protocol reference | Done | `skills/protocol.md` |
