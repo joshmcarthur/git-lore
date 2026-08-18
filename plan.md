@@ -6,7 +6,7 @@ Build an optional **`git-lore` CLI** that abstracts Lore operations (`refs/lore/
 
 ## Status
 
-**In progress — CLI shell + serve implemented; release binaries wired.** Lives under `extensions/git-lore/`. Binary: `bin/git-lore`. Cross-platform archives attach to GitHub Releases via release-please. Repository root remains skills-first.
+**Ready to merge.** CLI shell + `serve` UI implemented under `extensions/git-lore/`. Binary `bin/git-lore`. Cross-platform archives attach to GitHub Releases via release-please. Repository root remains skills-first.
 
 ## Scope
 
@@ -38,6 +38,6 @@ Build: `cd extensions/git-lore && make build` → `bin/git-lore`
 
 ## Next steps
 
-1. Dogfood `git-lore serve` against this repository
+1. Land PR; dogfood `git-lore serve` against this repository
 2. Add read-only CLI commands (`list`, `show`) before write commands
 3. Mirror skill semantics carefully when adding create/edit/sync
