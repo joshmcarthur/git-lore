@@ -16,7 +16,7 @@ lore history, and synthesizes a handoff summary.
 Lore is read via `git show` on the lore ref — nothing is written to the
 working tree.
 
-Protocol reference: [skills/protocol.md](../protocol.md) and Lore Work
+Protocol reference: [references/protocol.md](references/protocol.md) and Lore Work
 `refs/lore/git-lore` (`git show refs/lore/git-lore:spec.md`) for full
 specification. This skill's Lore Work: `refs/lore/read-lore`.
 

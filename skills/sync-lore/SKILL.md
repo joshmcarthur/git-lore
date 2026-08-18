@@ -15,7 +15,7 @@ local vs remote refs, and reports divergence.
 
 Nothing is written to the working tree — lore refs and git config only.
 
-Protocol reference: [skills/protocol.md](../protocol.md) and Lore Work
+Protocol reference: [references/protocol.md](references/protocol.md) and Lore Work
 `refs/lore/git-lore` (`git show refs/lore/git-lore:spec.md`) for full
 specification. This skill's Lore Work: `refs/lore/sync-lore`.
 

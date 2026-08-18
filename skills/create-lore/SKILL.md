@@ -12,7 +12,7 @@ Create a new Lore Work: an independent, versioned context store at
 `refs/lore/<work-id>`. Lore lives in Git objects only — nothing is written
 to the repository working tree.
 
-Protocol reference: [skills/protocol.md](../protocol.md) and Lore Work
+Protocol reference: [references/protocol.md](references/protocol.md) and Lore Work
 `refs/lore/git-lore` (`git show refs/lore/git-lore:spec.md`) for full
 specification.
 
@@ -87,7 +87,7 @@ Required sections:
 [Immediate actionable items]
 ```
 
-Apply the curation heuristic from [protocol.md](../protocol.md):
+Apply the curation heuristic from [references/protocol.md](references/protocol.md):
 
 > Would a future developer or agent otherwise have to rediscover this?
 
