@@ -116,3 +116,13 @@ The agent should be able to explain:
 
 If this is not materially easier with Lore than without it, reconsider
 the project.
+
+## Implementation status
+
+| Skill | Status |
+|-------|--------|
+| create-lore | Done — `skills/create-lore/SKILL.md` |
+| read-lore | Not started |
+| edit-lore | Not started |
+| sync-lore | Not started |
+| protocol reference | Done — `skills/protocol.md` |

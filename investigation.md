@@ -93,3 +93,15 @@ If agents write too little, Lore becomes stale.
 If they write too much, Lore becomes a transcript or bureaucratic log.
 
 The skills therefore need strong guidance and examples around curation.
+
+## protocol.md in the working tree
+
+During create-lore implementation, a shared `skills/protocol.md` was added
+to distil protocol rules for agent skills.
+
+Discovery: agents benefit from a working-tree reference they can read
+directly. Lore refs remain authoritative for full context, decisions, and
+history. The working-tree file should stay minimal and link to Lore rather
+than duplicate it.
+
+This is a pragmatic split, not a protocol requirement. Monitor for drift.
