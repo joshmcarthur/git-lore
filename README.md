@@ -300,15 +300,113 @@ When a source commit is rebased or squashed, its Notes do not automatically foll
 
 ## Getting started
 
-1. **Clone this repository** (or copy the `skills/` directory into your agent's skill path).
+### Install the skills
 
-2. **Start work on a branch:**
+git-lore skills follow the [Agent Skills](https://agentskills.io) format — one `SKILL.md` per skill under `skills/`. Install them into your coding agent using any of the methods below.
+
+#### skills.sh (recommended)
+
+The [skills.sh](https://skills.sh) ecosystem is powered by the open [`skills` CLI](https://github.com/vercel-labs/skills). It works across Cursor, Claude Code, Codex, GitHub Copilot, Windsurf, and [70+ other agents](https://github.com/vercel-labs/skills#supported-agents).
+
+```bash
+# List available skills in this repo
+npx skills add joshmcarthur/git-lore --list
+
+# Install all four skills (interactive — detects your installed agents)
+npx skills add joshmcarthur/git-lore
+
+# Install all skills globally, non-interactively
+npx skills add joshmcarthur/git-lore --all -g -y
+
+# Install specific skills to specific agents
+npx skills add joshmcarthur/git-lore \
+  --skill create-lore --skill read-lore --skill edit-lore --skill sync-lore \
+  -a cursor -a claude-code -a codex \
+  -g -y
+```
+
+| Scope | Flag | Where skills land |
+|-------|------|-------------------|
+| Project (default) | — | Agent-specific project directory (e.g. `.agents/skills/` for Cursor and Codex, `.claude/skills/` for Claude Code) |
+| Global | `-g` | User home directory (e.g. `~/.cursor/skills/`, `~/.claude/skills/`, `~/.codex/skills/`) |
+
+After installing, restart your agent or reload the window so it picks up the new skills. In most agents you can verify with a skills command (e.g. `/skills` in Claude Code) or by asking your agent to "create lore for this work".
+
+Update later with `npx skills update` or remove with `npx skills remove`.
+
+#### GitHub CLI
+
+If you use [GitHub's skill commands](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/coding-agent/create-skills) (`gh skill install`):
+
+```bash
+gh skill install joshmcarthur/git-lore create-lore
+gh skill install joshmcarthur/git-lore read-lore edit-lore sync-lore
+```
+
+Pin to a release tag for reproducible installs:
+
+```bash
+gh skill install joshmcarthur/git-lore create-lore --pin v0.1.0
+gh skill install joshmcarthur/git-lore read-lore@v0.1.0
+```
+
+Without `--pin`, `gh skill install` resolves the latest release tag, then falls back to the default branch. See [Releases](https://github.com/joshmcarthur/git-lore/releases) and [CHANGELOG.md](CHANGELOG.md) for version history.
+
+#### Manual install
+
+Copy or symlink each skill directory into your agent's skills path:
+
+```bash
+git clone https://github.com/joshmcarthur/git-lore /tmp/git-lore
+
+# Cursor (global)
+ln -s /tmp/git-lore/skills/create-lore ~/.cursor/skills/create-lore
+ln -s /tmp/git-lore/skills/read-lore  ~/.cursor/skills/read-lore
+ln -s /tmp/git-lore/skills/edit-lore  ~/.cursor/skills/edit-lore
+ln -s /tmp/git-lore/skills/sync-lore  ~/.cursor/skills/sync-lore
+
+# Claude Code (global)
+ln -s /tmp/git-lore/skills/create-lore ~/.claude/skills/create-lore
+# ... repeat for read-lore, edit-lore, sync-lore
+
+# Codex (global)
+ln -s /tmp/git-lore/skills/create-lore ~/.codex/skills/create-lore
+# ... repeat for read-lore, edit-lore, sync-lore
+```
+
+For project-scoped installs, use the agent's project path instead (e.g. `.agents/skills/` for Cursor and Codex, `.claude/skills/` for Claude Code). See the [supported agents table](https://github.com/vercel-labs/skills#supported-agents) for other tools.
+
+Each skill links to [skills/protocol.md](skills/protocol.md) at `references/protocol.md` inside the skill directory (symlink in this repo; copied on install by the skills CLI).
+
+### Listing on skills.sh
+
+There is no separate submission form. [skills.sh](https://skills.sh) is a leaderboard built from anonymous install telemetry collected by the `skills` CLI. A skill appears once people install it from a public Git repository.
+
+**What you need:**
+
+1. A **public GitHub repository** (this repo qualifies).
+2. Valid **`SKILL.md` files** with required YAML frontmatter (`name`, `description`) in a [discoverable location](https://github.com/vercel-labs/skills#skill-discovery) — git-lore uses `skills/<skill-name>/SKILL.md`.
+3. **Installs via `npx skills add`** — ranking reflects install counts, not a manual review queue.
+
+Optional: add an install badge to your README (replace `owner/repo` with your source):
+
+```markdown
+[![skills.sh](https://skills.sh/b/joshmcarthur/git-lore)](https://skills.sh/joshmcarthur/git-lore)
+```
+
+Browse individual skills at `https://skills.sh/<owner>/<repo>/<skill-name>` once installs accumulate. Skills are subject to routine security audits; report issues at [security.vercel.com](https://security.vercel.com).
+
+### Use git-lore in your project
+
+These steps assume the skills are already installed in your agent (see above). You do **not** need to clone this repository into your project — only the skills need to be available to your agent.
+
+1. **Start work on a branch:**
 
    ```bash
    git switch -c my-feature
    ```
 
-3. **Ask your agent to create Lore:**
+2. **Ask your agent to create Lore:**
 
    > Create lore for this work.
 
@@ -320,32 +418,19 @@ When a source commit is rebased or squashed, its Notes do not automatically foll
    git status   # should be clean — no lore files in the tree
    ```
 
-4. **Work normally.** When something durable emerges:
+3. **Work normally.** When something durable emerges:
 
    > Record this decision in lore: we chose X because Y.
 
-5. **Hand off to another agent or session:**
+4. **Hand off to another agent or session:**
 
    > Read lore for this work. Summarize for handoff.
 
-6. **Share Lore** (when you have a remote):
+5. **Share Lore** (when you have a remote):
 
    > Sync lore.
 
    Or configure and run transport yourself (see [How it works technically](#how-it-works-technically)).
-
-### Installing a specific version
-
-Skills are versioned as a collection. Pin to a release tag for reproducible installs:
-
-```bash
-gh skill install joshmcarthur/git-lore create-lore --pin v0.1.0
-gh skill install joshmcarthur/git-lore read-lore@v0.1.0
-```
-
-Without `--pin`, `gh skill install` resolves the latest release tag, then falls back to the default branch.
-
-See [Releases](https://github.com/joshmcarthur/git-lore/releases) and [CHANGELOG.md](CHANGELOG.md) for version history.
 
 ---
 
@@ -406,7 +491,7 @@ What is deliberately **not** here (yet):
 
 - a daemon, database, hosted service, MCP server, or CLI
 - a manifest or transcript store
-- a GitHub App or skill marketplace publishing (`gh skill publish`)
+- a GitHub App or formal marketplace submission (skills appear on [skills.sh](https://skills.sh) via `npx skills add` install telemetry)
 - automatic lore updates or AI summarisation pipelines
 
 That restraint is a feature. The project is trying to prove the workflow before building infrastructure around it.

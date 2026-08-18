@@ -1,5 +1,10 @@
 # Lore protocol reference
 
+Canonical copy: `skills/protocol.md`. Each skill links to it at
+`references/protocol.md` (symlink). The skills CLI dereferences symlinks on
+install, so individual skill installs still get a real copy. After editing the
+canonical file, run `./scripts/sync-protocol-references.sh` to recreate links.
+
 Distilled from the git-lore specification (`refs/lore/git-lore`). Read that
 Lore Work (`git show refs/lore/git-lore:spec.md`) for full protocol context,
 decisions, and open questions.

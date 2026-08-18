@@ -14,7 +14,7 @@ apply curated edits, commit a new lore revision, and update
 `refs/lore/<work-id>`. Lore lives in Git objects only — nothing is written
 to the repository working tree.
 
-Protocol reference: [skills/protocol.md](../protocol.md) and Lore Work
+Protocol reference: [references/protocol.md](references/protocol.md) and Lore Work
 `refs/lore/git-lore` (`git show refs/lore/git-lore:spec.md`) for full
 specification. This skill's Lore Work: `refs/lore/edit-lore`.
 
@@ -37,7 +37,7 @@ Do **not** use when:
 **Apply this gate before every edit.** This is the primary control for Lore
 quality. If content fails, do not edit Lore — tell the user why.
 
-1. **Durable?** Apply heuristic from [protocol.md](../protocol.md):
+1. **Durable?** Apply heuristic from [references/protocol.md](references/protocol.md):
 
    > Would a future developer or agent otherwise have to rediscover this?
 
