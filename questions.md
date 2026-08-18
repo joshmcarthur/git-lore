@@ -21,14 +21,17 @@ tested before introducing a more elaborate mechanism.
 
 ## How should Lore refs be transported?
 
-Need to establish exact behaviour for:
+**Partially resolved** by sync-lore Lore Work (`refs/lore/sync-lore:spec.md`):
 
-- git clone
-- git fetch
-- git pull
-- git push
-- multiple remotes
+- One-time per-remote fetch refspec: `refs/lore/*:refs/lore/*` (no `+` prefix)
+- Explicit `git fetch` / `git push` on lore refs; sync-lore fetch, push, sync, and status modes
+- Post-clone setup: configure refspec then `git fetch`
+- Divergence detection without automatic merge (manual reconciliation via edit-lore)
+
+**Still open:**
+
 - shallow clones
+- multiple remotes (refspec per remote; status clarity)
 - worktree setups
 
 The protocol must not assume arbitrary refs are transported automatically.

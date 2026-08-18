@@ -124,7 +124,7 @@ the project.
 | create-lore | Done | `refs/lore/create-lore` |
 | read-lore | Done — `skills/read-lore/SKILL.md` | `refs/lore/read-lore` |
 | edit-lore | Done — `skills/edit-lore/SKILL.md` | `refs/lore/edit-lore` |
-| sync-lore | Not started | — |
+| sync-lore | In progress — Lore Work has plan/spec; SKILL.md pending | `refs/lore/sync-lore` |
 | protocol reference | Done | `skills/protocol.md` |
 
 Per-skill Lore Works (`refs/lore/create-lore`, `refs/lore/read-lore`) hold
