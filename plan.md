@@ -22,7 +22,8 @@ and smoke-tested.
 ## Remaining for this Work
 
 - Commit skill files to source branch (`skills/create-lore`)
-- sync-lore to push `refs/lore/create-lore` when remote exists
+- sync-lore Lore Work (`refs/lore/sync-lore`) now planned — use sync-lore to push
+  `refs/lore/create-lore` when a remote exists
 
 ## Success criterion
 
