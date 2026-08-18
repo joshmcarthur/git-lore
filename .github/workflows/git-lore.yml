@@ -1,0 +1,46 @@
+name: git-lore-cli
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - "extensions/git-lore/**"
+      - ".github/workflows/git-lore.yml"
+
+defaults:
+  run:
+    working-directory: extensions/git-lore
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.23.x"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: extensions/git-lore/web/package-lock.json
+
+      - name: Test Go
+        run: make test
+
+      - name: Build web + binary
+        run: make build
+
+      - name: Smoke CLI + API
+        run: |
+          ./bin/git-lore version
+          ./bin/git-lore help >/dev/null
+          ./bin/git-lore serve --repo ../.. --addr 127.0.0.1:9473 &
+          pid=$!
+          sleep 1
+          curl -sf http://127.0.0.1:9473/api/repo >/dev/null
+          curl -sf http://127.0.0.1:9473/api/works >/dev/null
+          kill $pid

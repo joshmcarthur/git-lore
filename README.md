@@ -438,6 +438,8 @@ These steps assume the skills are already installed in your agent (see above). Y
 
 Source commits on `main` should follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, etc.). [release-please](https://github.com/googleapis/release-please) opens a Release PR that bumps [version.txt](version.txt) and [CHANGELOG.md](CHANGELOG.md). Merge that PR to create a git tag and GitHub Release.
 
+When a release is published, CI also builds the optional [`git-lore` CLI](extensions/git-lore) for linux/darwin/windows and attaches the archives to that GitHub Release (`git-lore_<version>_<os>_<arch>.tar.gz` / `.zip`).
+
 Lore commits (`lore: ...` on `refs/lore/*`) are separate from source history and are not included in release changelogs.
 
 ---
@@ -486,14 +488,31 @@ What exists today:
 - Lore refs documenting the protocol and each skill's implementation
 - Dogfooding evidence that the workflow can carry context from one Work to the next
 - Automated releases via release-please (semver tags and GitHub Releases)
+- An optional **`git-lore` CLI** under [`extensions/git-lore`](extensions/git-lore) — starts with `serve` (browser UI); intended to grow into command wrappers for people who prefer not to use the skills
 
 What is deliberately **not** here (yet):
 
-- a daemon, database, hosted service, MCP server, or CLI
+- a daemon, database, hosted service, or MCP server
 - a manifest or transcript store
 - a GitHub App or formal marketplace submission (skills appear on [skills.sh](https://skills.sh) via `npx skills add` install telemetry)
 - automatic lore updates or AI summarisation pipelines
+- write/push from the serve UI (create/edit remain skill-driven until CLI subcommands exist)
 
-That restraint is a feature. The project is trying to prove the workflow before building infrastructure around it.
+That restraint is a feature. The project is trying to prove the workflow before building infrastructure around it. The repository root stays skills-first; executables live under `extensions/` so they do not crowd the primary agent-skills surface.
+
+### git-lore CLI (optional extension)
+
+Optional Go CLI in [`extensions/git-lore`](extensions/git-lore). Not required to use the skills. Today: `serve` runs a read-only Lore browser (plus remote fetch). Later: subcommands that abstract the same Git operations the skills perform.
+
+```bash
+cd extensions/git-lore
+make build
+./bin/git-lore serve --repo ../.. --open
+# listens on http://127.0.0.1:9473 by default
+```
+
+Release archives are attached to GitHub Releases when release-please publishes (`git-lore_<version>_<os>_<arch>.tar.gz` / `.zip` for linux, darwin, and windows).
+
+Flags for `serve`: `--repo <path>`, `--addr host:port`, `--open`.
 
 Success criterion (from [`refs/lore/git-lore` plan.md](https://github.com/joshmcarthur/git-lore/blob/d39214e39944d2bdbf012452d39ba3e8d55761e9/plan.md)): hand this repository to a fresh agent with no conversational history. If Lore makes it materially easier to explain what git-lore is, why it exists, what was decided, what was rejected, and what needs to happen next — the experiment is working.
