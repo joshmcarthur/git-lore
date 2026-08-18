@@ -124,7 +124,7 @@ the project.
 | create-lore | Done | `refs/lore/create-lore` |
 | read-lore | Done — `skills/read-lore/SKILL.md` | `refs/lore/read-lore` |
 | edit-lore | Done — `skills/edit-lore/SKILL.md` | `refs/lore/edit-lore` |
-| sync-lore | In progress — Lore Work has plan/spec; SKILL.md pending | `refs/lore/sync-lore` |
+| sync-lore | Done — `skills/sync-lore/SKILL.md` | `refs/lore/sync-lore` |
 | protocol reference | Done | `skills/protocol.md` |
 
 Per-skill Lore Works (`refs/lore/create-lore`, `refs/lore/read-lore`) hold
@@ -133,6 +133,10 @@ the protocol authority.
 
 ## Next steps
 
-1. Implement `skills/sync-lore/SKILL.md` per its Lore Work (priority)
-2. Dogfood sync-lore against this Work and per-skill Lore Works
-3. Commit completed skills to source branches as implementation finishes
+All four core skills (create-lore, read-lore, edit-lore, sync-lore) are done.
+
+Remaining:
+
+1. Commit completed skills to the source branch
+2. Dogfood transport when a remote exists (push/fetch lore refs)
+3. README and examples demonstrating useful Lore
