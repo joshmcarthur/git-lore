@@ -9,8 +9,7 @@ a fresh agent can understand the work without conversational history.
 
 ## Status
 
-**In progress.** Lore Work created; `skills/read-lore/SKILL.md` not yet
-written.
+**Done.** `skills/read-lore/SKILL.md` implemented.
 
 ## What we're trying to prove
 
