@@ -334,6 +334,27 @@ When a source commit is rebased or squashed, its Notes do not automatically foll
 
    Or configure and run transport yourself (see [How it works technically](#how-it-works-technically)).
 
+### Installing a specific version
+
+Skills are versioned as a collection. Pin to a release tag for reproducible installs:
+
+```bash
+gh skill install joshmcarthur/git-lore create-lore --pin v0.1.0
+gh skill install joshmcarthur/git-lore read-lore@v0.1.0
+```
+
+Without `--pin`, `gh skill install` resolves the latest release tag, then falls back to the default branch.
+
+See [Releases](https://github.com/joshmcarthur/git-lore/releases) and [CHANGELOG.md](CHANGELOG.md) for version history.
+
+---
+
+## Releasing
+
+Source commits on `main` should follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, etc.). [release-please](https://github.com/googleapis/release-please) opens a Release PR that bumps [version.txt](version.txt) and [CHANGELOG.md](CHANGELOG.md). Merge that PR to create a git tag and GitHub Release.
+
+Lore commits (`lore: ...` on `refs/lore/*`) are separate from source history and are not included in release changelogs.
+
 ---
 
 ## Lore in this repository
@@ -346,6 +367,7 @@ When a source commit is rebased or squashed, its Notes do not automatically foll
 | `refs/lore/edit-lore` | edit-lore skill plan, spec, and implementation discoveries | [tree](https://github.com/joshmcarthur/git-lore/tree/86c2f8c4b06824ec09637c0a2f0dd9c1f9fd92b8) · [spec.md](https://github.com/joshmcarthur/git-lore/blob/86c2f8c4b06824ec09637c0a2f0dd9c1f9fd92b8/spec.md) |
 | `refs/lore/sync-lore` | sync-lore skill plan, spec, and transport decisions | [tree](https://github.com/joshmcarthur/git-lore/tree/dcb7b8e5fdbc32e95b9241e52e391d85e0a95baa) · [spec.md](https://github.com/joshmcarthur/git-lore/blob/dcb7b8e5fdbc32e95b9241e52e391d85e0a95baa/spec.md) |
 | `refs/lore/readme` | README authoring work | [tree](https://github.com/joshmcarthur/git-lore/tree/b763033816fb1b4db287664ae63a2744e08f4f97) |
+| `refs/lore/release-please` | Skill versioning and release automation | [tree](https://github.com/joshmcarthur/git-lore/tree/7b21e12e3adbd87e4d71c1ecc1db77d50b84a92b) · [spec.md](https://github.com/joshmcarthur/git-lore/blob/7b21e12e3adbd87e4d71c1ecc1db77d50b84a92b/spec.md) · [decisions.md](https://github.com/joshmcarthur/git-lore/blob/7b21e12e3adbd87e4d71c1ecc1db77d50b84a92b/decisions.md) |
 
 Locally:
 
@@ -378,12 +400,13 @@ What exists today:
 - A distilled protocol reference in the working tree
 - Lore refs documenting the protocol and each skill's implementation
 - Dogfooding evidence that the workflow can carry context from one Work to the next
+- Automated releases via release-please (semver tags and GitHub Releases)
 
 What is deliberately **not** here (yet):
 
 - a daemon, database, hosted service, MCP server, or CLI
 - a manifest or transcript store
-- GitHub-specific integrations
+- a GitHub App or skill marketplace publishing (`gh skill publish`)
 - automatic lore updates or AI summarisation pipelines
 
 That restraint is a feature. The project is trying to prove the workflow before building infrastructure around it.
