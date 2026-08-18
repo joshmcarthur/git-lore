@@ -2,23 +2,19 @@
 
 ## What
 
-Optional `git-lore` CLI under `extensions/git-lore/`. Full implementation exists on `feat/git-lore-cli` (and `origin/feat/git-lore-cli`). Monolithic PR https://github.com/joshmcarthur/git-lore/pull/4 was **closed** to split review.
+Stacked PRs for the optional `git-lore` CLI:
 
-## Why split
+| PR | Branch | Base | Contents |
+|----|--------|------|----------|
+| [#5](https://github.com/joshmcarthur/git-lore/pull/5) | `feat/git-lore-cli-backend` | `main` | Go CLI, lore API, placeholder HTML, Go CI |
+| [#6](https://github.com/joshmcarthur/git-lore/pull/6) | `feat/git-lore-cli-ui` | backend | Vue SPA, `make web`/`dist`, release-please binaries |
 
-Backend (Go API/CLI) and frontend (Vue + release binary job) are separately reviewable. `go:embed` needs a placeholder until Vite `webdist` lands.
+Closed: [#4](https://github.com/joshmcarthur/git-lore/pull/4) (monolith). Backup branch: `feat/git-lore-cli`.
 
-## Approved stack (not executed yet)
+## Merge order
 
-1. **PR1 → main:** Go CLI + `internal/git` + API + `serve` with committed plain HTML placeholder; Go-only CI/Makefile; no Vue; no release-please binary upload
-2. **PR2 → PR1:** `web/` Vue SPA, Makefile `web`/`dist`, release-please `release-binaries`, fuller CI + README
+Merge #5 first. Then merge #6 (retarget to `main` after #5 lands if GitHub does not auto-update the base).
 
-Backup: do not delete `feat/git-lore-cli` until the stack is open and verified.
+## Next
 
-## Decided (durable)
-
-See `decisions.md` — especially extensions/ layout, `serve` command name, gitignore webdist, release-please binaries, and stacked PRs.
-
-## Next agent action
-
-Execute the split: create PR1/PR2 branches from the backup commit, push, open PRs, leave `feat/git-lore-cli` intact.
+Review PRs; after merge, delete backup branch when comfortable.

@@ -2,44 +2,21 @@
 
 ## Objective
 
-Build an optional **`git-lore` CLI** that abstracts Lore operations (`refs/lore/*`) for people who prefer commands over agent skills. The first command is `serve`: eventually an embedded Vue SPA for browsing Lore via ordinary `git`. Later commands can wrap create / read / edit / sync without requiring an agent.
+Build an optional **`git-lore` CLI** that abstracts Lore operations (`refs/lore/*`) for people who prefer commands over agent skills. The first command is `serve`: an embedded Vue SPA for browsing Lore via ordinary `git`. Later commands can wrap create / read / edit / sync without requiring an agent.
 
 ## Status
 
-**Implemented on branch `feat/git-lore-cli` (backup); monolithic PR #4 closed.** Splitting into stacked PRs before merge:
+**Stacked PRs open.** Monolithic PR #4 closed. Backup: `feat/git-lore-cli` / `refs/backup/feat-git-lore-cli-*`.
 
-1. Backend — CLI + API + placeholder HTML embed
-2. Frontend — Vue UI + release binaries (stacked on 1)
+1. [#5](https://github.com/joshmcarthur/git-lore/pull/5) — backend CLI + API + placeholder HTML → `main`
+2. [#6](https://github.com/joshmcarthur/git-lore/pull/6) — Vue UI + release binaries → #5
 
 ## Scope
 
-**In scope (now / near-term PRs):**
-
-- CLI entrypoint (`serve`, `help`, `version`)
-- Lore HTTP API over `git`
-- Vue `serve` UI + gitignored `webdist`
-- Release assets via release-please
-
-**In scope (later):**
-
-- CLI counterparts to skill workflows (`list`, `show`, `create`, `edit`, `sync`, …)
-
-**Out of scope (for now):**
-
-- Create/edit/push from the serve UI
-- AI handoff synthesis
-- MCP / hosted service
-- Root-level product promotion (stays under `extensions/`)
-
-## Layout
-
-```
-extensions/git-lore/   # self-contained Go module (+ Vue in frontend PR)
-skills/                # primary repository surface
-```
+Unchanged: CLI under `extensions/git-lore/`; skills remain primary.
 
 ## Next steps
 
-1. Open stacked PR1 (backend) and PR2 (frontend) from the approved split plan
-2. Merge PR1 → then PR2; retire `feat/git-lore-cli` when stack lands
-3. Dogfood `git-lore serve`; later add `list` / `show` before write commands
+1. Review and merge #5, then #6
+2. Retire `feat/git-lore-cli` after stack lands
+3. Dogfood `serve`; later add `list` / `show` before write commands
