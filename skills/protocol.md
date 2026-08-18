@@ -35,10 +35,43 @@ The work-id does not need to be repeated in documents.
 
 ## Lore commits
 
-- Initial commit: **orphan** (no parents)
+- Initial commit: **orphan** (no parents) — create-lore uses `git hash-object` +
+  `git mktree` + `git commit-tree`
 - Message prefix: `lore:` (e.g. `lore: initialise Work create-lore`)
-- Subsequent edits append with normal parent linkage
+- Subsequent edits append with normal parent linkage — edit-lore parents off
+  current lore HEAD
 - Lore commits are separate from source-code commits on the branch
+
+## Editing lore (edit-lore)
+
+edit-lore exports via `git archive`, edits in a temp directory, and commits
+with an **isolated index** (`GIT_INDEX_FILE`). Without index isolation,
+`git add -A` in the temp dir pollutes the main repository index.
+
+```bash
+REF="refs/lore/<work-id>"
+COMMIT=$(git rev-parse "$REF")
+DIR=$(mktemp -d)
+INDEX=$(mktemp)
+GIT_DIR=$(git rev-parse --git-dir)
+
+git archive "$COMMIT" | tar -x -C "$DIR"
+# edit files in $DIR
+
+export GIT_INDEX_FILE="$INDEX"
+git --git-dir="$GIT_DIR" read-tree --empty
+cd "$DIR"
+git --git-dir="$GIT_DIR" add -A .
+TREE=$(git --git-dir="$GIT_DIR" write-tree)
+unset GIT_INDEX_FILE
+
+NEW=$(git commit-tree "$TREE" -p "$COMMIT" -m "lore: <what changed>")
+git update-ref "$REF" "$NEW"
+rm -rf "$DIR" "$INDEX"
+```
+
+Apply the curation gate before writing. Read current lore before editing.
+See `refs/lore/edit-lore:spec.md` for full edit-lore specification.
 
 ## Branch association (local)
 
