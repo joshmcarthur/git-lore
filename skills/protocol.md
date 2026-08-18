@@ -107,8 +107,30 @@ git diff refs/lore/<work-id>~1 refs/lore/<work-id>
 
 ## Transport
 
-Lore refs are not fetched or pushed by default. See sync-lore for refspec
-setup. Lore must remain reachable via `refs/lore/*` for Git GC to preserve it.
+Lore refs are not fetched or pushed by default. Configure once per remote
+(local `.git/config`, not committed):
+
+```bash
+git config --add remote.origin.fetch 'refs/lore/*:refs/lore/*'
+```
+
+No `+` prefix on the fetch refspec — avoids force-overwriting local lore
+refs with unpushed commits on fetch.
+
+```bash
+git fetch origin 'refs/lore/*:refs/lore/*'
+git push origin 'refs/lore/*'
+```
+
+Post-clone: add the refspec, then `git fetch origin` before expecting lore
+locally.
+
+Diverged histories are not merged automatically. sync-lore documents detection,
+side refs (`refs/lore/<id>-remote`), and manual reconciliation via edit-lore.
+See `refs/lore/sync-lore:spec.md` and `refs/lore/sync-lore:decisions.md`;
+agent skill [skills/sync-lore/SKILL.md](sync-lore/SKILL.md).
+
+Lore must remain reachable via `refs/lore/*` for Git GC to preserve it.
 
 ## Garbage collection
 
