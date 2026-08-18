@@ -21,7 +21,7 @@ Build an optional **`git-lore` CLI** that abstracts Lore operations (`refs/lore/
 
 **Out of scope (for now):**
 
-- Create/edit/push from the explore UI
+- Create/edit/push from the serve UI
 - AI handoff synthesis
 - MCP server, hosted service, or database
 - Promoting the CLI to a first-class root-level product surface
@@ -29,7 +29,7 @@ Build an optional **`git-lore` CLI** that abstracts Lore operations (`refs/lore/
 ## Layout
 
 ```
-extensions/git-lore/   # self-contained Go module + Vue (explore UI)
+extensions/git-lore/   # self-contained Go module + Vue (serve UI)
 skills/                # primary repository surface
 ```
 

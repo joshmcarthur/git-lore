@@ -1,6 +1,6 @@
 # Decisions
 
-## Read-only explore UI (v1)
+## Read-only serve UI (v1)
 
 **Decision:** The `explore` UI is read + fetch only. Create, edit, and push stay with agent skills until dedicated CLI subcommands exist.
 
@@ -32,7 +32,7 @@
 
 ## Binary and CLI name: `git-lore`
 
-**Decision:** Produce `bin/git-lore` with subcommands. First command: `explore` (aliases `ui`, `serve`). Extension path: `extensions/git-lore/`.
+**Decision:** Produce `bin/git-lore` with subcommands. Command: `explore` (aliases `ui`, `serve`). Extension path: `extensions/git-lore/`.
 
 **Why:** Positions the tool as a general Lore CLI that can grow beyond a browser — abstracting the same Git conventions the skills use for people who do not want agent skills. `lore-explorer` as a binary name locked the tool to one UI; `git-lore explore` leaves room for `list` / `show` / `create` / `sync` without a second binary.
 
@@ -47,3 +47,9 @@
 **Decision:** Dispatch commands with a small `switch` on `os.Args` and per-command `flag.FlagSet`s. Do not add Cobra/urfave yet.
 
 **Why:** Only one real command exists. A framework can wait until subcommand count or flag complexity justifies the dependency.
+
+## Command name: `serve`
+
+**Decision:** The UI subcommand is `git-lore serve` only — no `explore` / `ui` aliases.
+
+**Why:** One clear verb. Aliases add surface area without helping discovery.
