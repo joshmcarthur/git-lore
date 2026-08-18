@@ -57,3 +57,16 @@ Available skills: `create-lore`, `read-lore`, `edit-lore`, `sync-lore`.
 
 Lore refs remain independent of skill releases. Transport via sync-lore
 is unchanged — lore and skill versions have separate lifecycles.
+
+## CLI release artifacts
+
+After release-please publishes a GitHub Release, workflow job `release-binaries`
+(in `.github/workflows/release-please.yml`) builds `extensions/git-lore` for:
+
+- linux/amd64, linux/arm64
+- darwin/amd64, darwin/arm64
+- windows/amd64
+
+Archives are named `git-lore_<version>_<os>_<arch>.tar.gz` (`.zip` on Windows)
+and uploaded to the same release via `gh release upload`. The binary version
+string is injected with `-ldflags -X main.version=<semver>`.

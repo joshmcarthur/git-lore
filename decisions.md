@@ -37,3 +37,11 @@ or hosted service.
 
 This is release infrastructure, not a lore protocol extension. Lore refs
 and skill distribution remain separate concerns.
+
+## Attach git-lore CLI binaries on release
+
+**Decision:** When release-please creates a GitHub Release, a follow-on CI job builds cross-platform `git-lore` archives and uploads them to that release.
+
+**Why:** Skills remain the primary install path (`gh skill install` / `npx skills add`). The optional CLI under `extensions/git-lore` still needs a distribution channel once a tag exists. Attaching binaries to the same release keeps one version lineage (`version.txt` / tag) for skills and CLI without a separate goreleaser project.
+
+Platforms: linux/amd64, linux/arm64, darwin/amd64, darwin/arm64, windows/amd64.
