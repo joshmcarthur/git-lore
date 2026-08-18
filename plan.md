@@ -6,7 +6,7 @@ Build an optional **`git-lore` CLI** that abstracts Lore operations (`refs/lore/
 
 ## Status
 
-**In progress — CLI shell + serve implemented.** Lives under `extensions/git-lore/`. Binary: `bin/git-lore`. Repository root remains skills-first.
+**In progress — CLI shell + serve implemented; release binaries wired.** Lives under `extensions/git-lore/`. Binary: `bin/git-lore`. Cross-platform archives attach to GitHub Releases via release-please. Repository root remains skills-first.
 
 ## Scope
 
@@ -14,6 +14,7 @@ Build an optional **`git-lore` CLI** that abstracts Lore operations (`refs/lore/
 
 - CLI entrypoint with subcommands (`serve`, `help`, `version`)
 - `serve`: list Works, Markdown view, history/diffs, remote status, fetch
+- Release assets for linux/darwin/windows on each GitHub Release
 
 **In scope (later):**
 
@@ -40,4 +41,3 @@ Build: `cd extensions/git-lore && make build` → `bin/git-lore`
 1. Dogfood `git-lore serve` against this repository
 2. Add read-only CLI commands (`list`, `show`) before write commands
 3. Mirror skill semantics carefully when adding create/edit/sync
-4. Consider goreleaser only if distribution demand appears

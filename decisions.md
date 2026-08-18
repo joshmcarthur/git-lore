@@ -53,3 +53,9 @@
 **Decision:** Dispatch commands with a small `switch` on `os.Args` and per-command `flag.FlagSet`s. Do not add Cobra/urfave yet.
 
 **Why:** Only one real command exists. A framework can wait until subcommand count or flag complexity justifies the dependency.
+
+## Release binaries via release-please (not a separate goreleaser project)
+
+**Decision:** Cross-compile `git-lore` in the existing release-please workflow (`release-binaries` job) and upload archives to the GitHub Release for that tag.
+
+**Why:** One version (`version.txt` / `v*`) covers skills and CLI. Avoids maintaining a second release pipeline. `make dist` is the local equivalent.
