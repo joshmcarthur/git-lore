@@ -139,4 +139,4 @@ Remaining:
 
 1. Commit completed skills to the source branch
 2. Dogfood transport when a remote exists (push/fetch lore refs)
-3. README and examples demonstrating useful Lore
+3. README done (see refs/lore/readme); examples remain
