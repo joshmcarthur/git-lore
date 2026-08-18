@@ -35,16 +35,17 @@ The protocol must not assume arbitrary refs are transported automatically.
 
 ## What does "read Lore" actually mean?
 
-Simply concatenating all Markdown is unlikely to be ideal.
+**Partially resolved** by read-lore spec (`refs/lore/read-lore:spec.md`):
 
-A useful reader should distinguish:
+- Structured document order, not concatenation
+- Handoff summary at read time (what / why / decided / rejected / next)
+- Lore history preview (recent commits, not full diffs by default)
 
-- current state
-- decisions
-- unresolved questions
-- historical context
+**Still open:**
 
-Need to test this with real agents.
+- Default lore history depth (currently 10 commits — may be too shallow)
+- Multi-work onboarding (read several Works in one session)
+- Large document handling
 
 ## How much should agents automatically update Lore?
 
@@ -87,3 +88,11 @@ Need to determine:
 - how related or successor Works should be represented
 
 Do not solve this until real usage provides evidence.
+
+## Should handoff summaries be persisted?
+
+read-lore generates summaries at read time. edit-lore can curate
+handoff.md when a summary proves durable across sessions.
+
+Open whether read-lore should suggest writing handoff.md automatically.
+See `refs/lore/read-lore:questions.md`.

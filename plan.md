@@ -119,10 +119,20 @@ the project.
 
 ## Implementation status
 
-| Skill | Status |
-|-------|--------|
-| create-lore | Done — `skills/create-lore/SKILL.md` |
-| read-lore | Not started |
-| edit-lore | Not started |
-| sync-lore | Not started |
-| protocol reference | Done — `skills/protocol.md` |
+| Skill | Status | Lore Work |
+|-------|--------|-----------|
+| create-lore | Done | `refs/lore/create-lore` |
+| read-lore | Planned — spec in Lore | `refs/lore/read-lore` |
+| edit-lore | Not started | — |
+| sync-lore | Not started | — |
+| protocol reference | Done | `skills/protocol.md` |
+
+Per-skill Lore Works (`refs/lore/create-lore`, `refs/lore/read-lore`) hold
+plan and spec for each skill. This Lore Work (`refs/lore/git-lore`) remains
+the protocol authority.
+
+## Next steps
+
+1. Implement `skills/read-lore/SKILL.md` per `refs/lore/read-lore:spec.md`
+2. Dogfood read-lore against this Work and per-skill Lore Works
+3. Implement edit-lore and sync-lore

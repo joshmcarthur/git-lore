@@ -86,7 +86,7 @@ case requires them.
 **Decision:** Treat refs/lore/* as a convention rather than an owned
 database namespace.
 
-The underlying Git refs and objects remain ordinary Git primitives.
+The underlying Git refs and objects remain ordinary Git objects.
 
 This keeps the protocol inspectable with standard Git tooling and avoids
 creating an artificial distinction between "Lore data" and Git data.
@@ -109,3 +109,38 @@ This guarantees that normal Git garbage collection preserves Lore
 history.
 
 Dangling Lore objects are not a supported persistence mechanism.
+
+## Structured read, not concatenation
+
+**Decision:** read-lore presents Lore in a priority document order and
+synthesizes a handoff summary. It does not dump all markdown files into
+context by default.
+
+Priority order: plan → decisions → questions → spec → investigation →
+architecture → handoff → other.
+
+Handoff summaries are generated at read time and map to the success
+criterion (what / why / decided / rejected / next). They are not stored
+unless later curated into handoff.md via edit-lore.
+
+See `refs/lore/read-lore:spec.md` for the read-lore specification.
+
+## Per-skill Lore Works
+
+**Decision:** Each skill implementation Work gets its own Lore ref
+(e.g. `refs/lore/create-lore`, `refs/lore/read-lore`) holding that skill's
+plan and spec.
+
+The protocol Lore (`refs/lore/git-lore`) remains authoritative for
+cross-cutting protocol decisions. Per-skill Lore holds implementation
+detail without bloating the protocol Work.
+
+## protocol.md alongside Lore refs
+
+**Decision:** A minimal `skills/protocol.md` in the working tree distils
+protocol rules for skills. Lore refs remain authoritative for full context,
+decisions, and history. The working-tree file links to Lore rather than
+duplicating it.
+
+This is a pragmatic agent UX choice, not a protocol requirement. Monitor
+for drift between protocol.md and Lore.
