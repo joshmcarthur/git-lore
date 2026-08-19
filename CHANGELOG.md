@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.2](https://github.com/joshmcarthur/git-lore/compare/v0.1.1...v0.1.2) (2026-08-19)
+
+
+### Features
+
+* add git-lore CLI backend and lore API ([7932a4a](https://github.com/joshmcarthur/git-lore/commit/7932a4a959c11815faa598f024b3248c4a31ccc3))
+* add git-lore serve UI and release binaries ([781196c](https://github.com/joshmcarthur/git-lore/commit/781196c9d4049b701679300251c4ecea649d8075))
+
 ## [0.1.1](https://github.com/joshmcarthur/git-lore/compare/v0.1.0...v0.1.1) (2026-08-18)
 
 
