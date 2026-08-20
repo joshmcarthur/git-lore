@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/joshmcarthur/git-lore/compare/v0.1.2...v0.1.3) (2026-08-20)
+
+
+### Features
+
+* git-lore as shell plugin with standalone serve ([#9](https://github.com/joshmcarthur/git-lore/issues/9)) ([a3ea032](https://github.com/joshmcarthur/git-lore/commit/a3ea032e2bbbd1168ca2a0f57ce7605945f82e31))
+
 ## [0.1.2](https://github.com/joshmcarthur/git-lore/compare/v0.1.1...v0.1.2) (2026-08-19)
 
 
