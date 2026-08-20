@@ -12,7 +12,7 @@ git switch -c add-widget
 # Later: "Read lore" or "Summarize lore for handoff"
 ```
 
-The Lore ref survives branch rebases, squash merges, and branch deletion. Source history and reasoning history have different lifecycles.
+The Lore ref survives branch rebases, squash merges, and branch deletion. Source history and reasoning history have different lifecycles. For how that is implemented in Git (refs, objects, plumbing), see [How it works technically](#how-it-works-technically).
 
 ---
 
@@ -231,36 +231,116 @@ If yes, it probably belongs in Lore. edit-lore applies this as a mandatory gate 
 
 ## How it works technically
 
-Lore is just Git refs and Git objects:
+Lore is ordinary Git. The unusual part is *which* Git features it uses: named refs and plumbing commands, not files in the working tree.
+
+### What a ref is
+
+A **ref** is a name that points at a commit SHA. You already use them:
+
+| Name you know | Ref | Points at |
+|---------------|-----|-----------|
+| Branch `main` | `refs/heads/main` | latest commit on that branch |
+| Tag `v1.0` | `refs/tags/v1.0` | a specific commit |
+| Lore Work `oauth2` | `refs/lore/oauth2` | latest lore commit for that work |
+
+Git stores refs under `.git/refs/` (or in `.git/packed-refs`). Updating a branch is updating a ref. Creating lore is the same operation in a different namespace: write a commit, then point `refs/lore/<work-id>` at it.
+
+That namespace is a convention, not a Git feature. Git does not treat `refs/lore/*` specially. Default `git fetch` / `git push` ignore it, which is why lore has to be fetched and pushed explicitly.
+
+### What Git stores (objects)
+
+Git's object database (`.git/objects`) holds three kinds of object lore cares about:
+
+| Object | What it is |
+|--------|------------|
+| **Blob** | The bytes of one file (`plan.md`, `decisions.md`, …) |
+| **Tree** | A directory listing: names → blobs (or nested trees) |
+| **Commit** | A tree, an optional parent commit, a message, and author metadata |
+
+A branch commit usually has a parent (the previous commit on that branch). The first lore commit is an **orphan**: it has no parent, so lore history is not attached to `main` or to your feature branch. Later lore commits parent off the previous *lore* commit. Rebases, squashes, and deleting the source branch do not move or rewrite that chain.
 
 ```
-refs/lore/<work-id>
-         │
-         ▼
-       commit
-         │
-         ▼
-   Markdown files
+refs/heads/feature/foo          refs/lore/oauth2
+         │                               │
+         ▼                               ▼
+    code commits                   lore commits
+    (parented on                   (orphan root,
+     the source branch)             then lore→lore)
 ```
 
-**Initial commit:** orphan (no parents) — lore history is independent of source-branch rebases and squashes.
+The lore ref is what keeps those objects alive. `git gc` collects unreachable objects; as long as `refs/lore/<work-id>` exists, the lore commits and their trees/blobs stay. Deleting the ref is how you remove a Work.
 
-**Subsequent commits:** parent off current lore HEAD — a curation log, not source commits.
+### Why nothing appears in `git status`
 
-**Messages:** `lore: <what changed>`
+Everyday Git writes files into the working tree, then `git add` / `git commit` snapshots them. Lore never does that.
 
-**Garbage collection:** the `refs/lore/*` ref keeps lore objects reachable. Deleting the ref is how you remove a Work.
+The skills (and the optional CLI) build objects **directly** with plumbing:
 
-**Inspect without skills:**
+- `git hash-object -w` — store file bytes as a blob
+- `git mktree` / `git write-tree` — store a directory listing as a tree
+- `git commit-tree` — store a commit that points at that tree
+- `git update-ref` — move the lore ref to the new commit
 
-```bash
-git for-each-ref refs/lore
-git log refs/lore/git-lore
-git show refs/lore/git-lore:plan.md
-git diff refs/lore/git-lore~1 refs/lore/git-lore
+`git show refs/lore/oauth2:plan.md` reads a blob out of the object database. No checkout, so the working tree stays clean and lore files cannot collide with source files of the same name.
+
+Branch discovery is separate and local: `git config branch.<branch>.lore <work-id>` is not a ref and is not committed. The shared identity is always the lore ref.
+
+### What the skills do in Git
+
+#### Create (create-lore)
+
+Builds the first lore commit from `plan.md` only, then names it:
+
+```
+plan.md bytes
+    │  git hash-object -w
+    ▼
+  blob
+    │  git mktree
+    ▼
+  tree (plan.md)
+    │  git commit-tree   ← no parent (orphan)
+    ▼
+  commit  "lore: initialise Work <id>"
+    │  git update-ref refs/lore/<id>
+    ▼
+  named pointer
 ```
 
-**Transport** (not automatic — configure once per remote):
+Also sets `branch.<current>.lore` so later reads/edits can find the Work without asking for an id.
+
+#### Read (read-lore)
+
+Does not check anything out. It resolves `refs/lore/<id>` (from an argument, or from `branch.*.lore`), lists files with `git ls-tree`, reads each document with `git show <ref>:<path>`, and shows recent lore history with `git log` on that ref. The handoff summary is generated at read time; it is not stored unless someone later curates a `handoff.md`.
+
+#### Change (edit-lore)
+
+Advances the same ref with a new commit whose parent is the current lore HEAD:
+
+```
+refs/lore/<id>  ──►  existing commit
+                         │
+                         │  git archive → temp directory → edit Markdown
+                         │  isolated GIT_INDEX_FILE → git write-tree
+                         ▼
+                       new tree
+                         │  git commit-tree -p <old commit>
+                         ▼
+                       new commit  "lore: <what changed>"
+                         │  git update-ref refs/lore/<id>
+                         ▼
+                   ref now points here
+```
+
+The isolated index matters: `git add` against the repo's real index would stage lore files as if they belonged to the source branch. Edits happen in a temp directory; that directory is deleted after the commit exists.
+
+Lore commits are never mixed into the source branch. One lore commit per curation event; messages use the `lore:` prefix.
+
+#### Store and share (sync-lore)
+
+Create and edit already stored the objects in this clone's `.git`. "Storing" lore on a remote is ordinary fetch/push of those refs.
+
+`refs/lore/*` is **not** in the default fetch refspec. After clone, lore is absent until you add one and fetch:
 
 ```bash
 git config --add remote.origin.fetch 'refs/lore/*:refs/lore/*'
@@ -268,7 +348,17 @@ git fetch origin 'refs/lore/*:refs/lore/*'
 git push origin 'refs/lore/*'
 ```
 
-No `+` prefix on fetch — unpushed local lore curation must not be overwritten by fetch.
+No `+` prefix on fetch — that would force-update local lore refs and discard unpushed curation. Diverged lore histories are not merged automatically (Markdown conflict markers are a bad outcome for curated notes). sync-lore fetches the remote side to `refs/lore/<id>-remote` so you can compare and reconcile by hand.
+
+### Inspect without skills
+
+```bash
+git for-each-ref refs/lore
+git log refs/lore/git-lore
+git show refs/lore/git-lore:plan.md
+git diff refs/lore/git-lore~1 refs/lore/git-lore
+git ls-tree -r --name-only refs/lore/git-lore
+```
 
 ---
 
