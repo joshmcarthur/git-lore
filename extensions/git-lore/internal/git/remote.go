@@ -19,17 +19,17 @@ const (
 
 // WorkRemoteStatus is sync classification for one work-id.
 type WorkRemoteStatus struct {
-	ID         string    `json:"id"`
-	LocalSHA   string    `json:"localSha,omitempty"`
-	RemoteSHA  string    `json:"remoteSha,omitempty"`
-	State      SyncState `json:"state"`
+	ID        string    `json:"id"`
+	LocalSHA  string    `json:"localSha,omitempty"`
+	RemoteSHA string    `json:"remoteSha,omitempty"`
+	State     SyncState `json:"state"`
 }
 
 // RemoteStatusResult is the response for remote status.
 type RemoteStatusResult struct {
-	Remote           string             `json:"remote"`
-	RefspecConfigured bool              `json:"refspecConfigured"`
-	Works            []WorkRemoteStatus `json:"works"`
+	Remote            string             `json:"remote"`
+	RefspecConfigured bool               `json:"refspecConfigured"`
+	Works             []WorkRemoteStatus `json:"works"`
 }
 
 // ClassifySync determines the relationship between local and remote SHAs.
@@ -188,10 +188,10 @@ func (r *Repo) RemoteStatus(remote string) (RemoteStatusResult, error) {
 
 // FetchResult reports fetch outcome.
 type FetchResult struct {
-	Remote      string `json:"remote"`
-	WorkID      string `json:"workId,omitempty"`
-	RefspecAdded bool  `json:"refspecAdded"`
-	Output      string `json:"output"`
+	Remote       string `json:"remote"`
+	WorkID       string `json:"workId,omitempty"`
+	RefspecAdded bool   `json:"refspecAdded"`
+	Output       string `json:"output"`
 }
 
 // FetchLore fetches lore refs from remote. If workID is non-empty, fetches that Work only.
