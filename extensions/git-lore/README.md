@@ -1,21 +1,45 @@
 # git-lore CLI
 
-Optional extension for [git-lore](../..): a Go CLI that can abstract Lore
-operations for people who prefer commands over agent skills.
+Optional extension for [git-lore](../..): a Git external command (`git lore`)
+that abstracts Lore operations for people who prefer commands over agent
+skills.
 
-Today the only command is **`serve`** — a local browser UI for Lore Works.
-Future subcommands can wrap the same Git conventions the skills use
-(`list`, `show`, `create`, `edit`, `sync`, …) without requiring an agent.
+**Architecture:**
+- Shell scripts under `lib/git-lore/` for create / edit / list / sync (skill-aligned Git plumbing)
+- Standalone Go binary `lib/git-lore/serve` for the read-only browser UI
 
-This is an experiment. The repository’s primary surface remains the agent
-skills under `skills/`.
+Skills under `skills/` remain the primary surface. This CLI mirrors the same
+Git conventions without requiring an agent.
+
+## Install
+
+### From source
+
+```bash
+cd extensions/git-lore
+make install PREFIX=~/.local
+# ensure ~/.local/bin is on PATH
+git lore help
+```
+
+### From a GitHub Release archive
+
+```bash
+tar xzf git-lore_<version>_darwin_arm64.tar.gz -C ~/.local
+# archive contains bin/git-lore and lib/git-lore/{*.sh,serve}
+```
+
+Windows: use Git Bash or WSL for git-ops commands (`create`, `edit`, …).
+`git lore serve` runs natively via `serve.exe`.
 
 ## Build and run
 
 ```bash
 make build
-./bin/git-lore serve --repo ../.. --open
 ./bin/git-lore help
+./bin/git-lore serve --repo ../.. --open
+# or, with bin on PATH:
+git lore serve --repo ../.. --open
 ```
 
 Flags for `serve`: `--repo <path>`, `--addr host:port` (default
@@ -37,21 +61,62 @@ Works sidebar:
 
 ## Commands
 
-| Command | Status | Purpose |
-|---------|--------|---------|
-| `serve` | implemented | Read-only Lore browser + remote fetch |
-| `list` / `show` / `create` / … | planned | CLI counterparts to skill workflows |
+| Command | Purpose |
+|---------|---------|
+| `list` | List local Lore Works |
+| `show` | Show Work metadata or a file (`git lore show <id> [file]`) |
+| `create` | Initialise a new Work (`plan.md` from stdin or `--from`) |
+| `edit` | Update a lore file (stdin, `--from`, or `--interactive`) |
+| `export` | Export a Work tree to `--dir` |
+| `delete` | Delete `refs/lore/<id>` |
+| `branch` | List or set/unset `branch.*.lore` associations |
+| `remote` | `fetch`, `push`, `sync`, or `status` against a remote |
+| `serve` | Read-only Lore browser UI |
 
-## Scope (serve)
+Most commands accept `--repo <path>` (default: current directory).
 
-**In:** list Works, view Markdown, history/diffs, remote status, fetch.
+### Examples
 
-**Out (for now):** create/edit/push from the UI; those stay skill-driven until
-dedicated CLI subcommands land.
+```bash
+git lore list --repo ../..
+git lore show git-lore plan.md
+
+cat plan.md | git lore create my-work --associate-branch
+
+cat decisions.md | git lore edit my-work --file decisions.md \
+  --message "lore: record auth decision"
+
+git lore export my-work --dir /tmp/my-work
+
+git lore remote status
+git lore remote sync --remote origin
+git lore remote push --work-id my-work
+```
+
+## Scope
+
+**In:** list/show/create/edit/export/delete Works, branch associations,
+remote fetch/push/sync/status, browser UI for read-only exploration.
+
+**Out:** browser UI mutations (create/edit from `serve`); REST API write
+endpoints; automatic divergence merge; curation gate enforcement in CLI;
+`--json` CLI output (use `git show refs/lore/<id>:file` or the serve API).
+
+## Layout
+
+```
+bin/git-lore              # dispatcher (git lore → lib/git-lore)
+lib/git-lore/
+  *.sh                    # skill-aligned shell commands
+  serve                   # Go binary (built by make)
+cmd/git-lore-serve/       # serve source
+internal/git/             # read layer for serve API only
+```
 
 ## Releases
 
-When release-please publishes a GitHub Release, CI runs `make dist` and uploads:
+When release-please publishes a GitHub Release, CI runs `make dist` and uploads
+archives containing `bin/git-lore` + `lib/git-lore/{*.sh,serve}`:
 
 - `git-lore_<version>_linux_amd64.tar.gz`
 - `git-lore_<version>_linux_arm64.tar.gz`
