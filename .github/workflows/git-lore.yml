@@ -28,16 +28,31 @@ jobs:
           cache: npm
           cache-dependency-path: extensions/git-lore/web/package-lock.json
 
-      - name: Test Go
+      - name: Install bats
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq bats
+
+      - name: Test Go + shell
         run: make test
 
-      - name: Build web + binary
+      - name: Build web + serve binary
         run: make build
 
       - name: Smoke CLI + API
         run: |
           ./bin/git-lore version
           ./bin/git-lore help >/dev/null
+          # Checkout does not include refs/lore/* — exercise git-ops on a temp repo.
+          PATH="$PWD/bin:$PATH" git lore list --repo ../.. >/dev/null
+          TMP=$(mktemp -d)
+          git -C "$TMP" init -q
+          git -C "$TMP" config user.email ci@example.com
+          git -C "$TMP" config user.name CI
+          git -C "$TMP" commit --allow-empty -q -m init
+          printf '# Plan\n\nCI smoke.\n' | PATH="$PWD/bin:$PATH" git lore create ci-smoke --repo "$TMP"
+          PATH="$PWD/bin:$PATH" git lore show ci-smoke plan.md --repo "$TMP" | grep -q '^# Plan'
+          PATH="$PWD/bin:$PATH" git lore list --repo "$TMP" | grep -q ci-smoke
+          PATH="$PWD/bin:$PATH" git lore delete ci-smoke --repo "$TMP"
+          rm -rf "$TMP"
           ./bin/git-lore serve --repo ../.. --addr 127.0.0.1:9473 &
           pid=$!
           sleep 1

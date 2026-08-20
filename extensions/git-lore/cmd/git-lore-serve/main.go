@@ -15,17 +15,34 @@ import (
 	"github.com/joshmcarthur/git-lore/extensions/git-lore/internal/server"
 )
 
-func runServe(args []string) error {
+const defaultVersion = "0.1.0"
+
+// version is overridden at link time via -ldflags "-X main.version=..."
+var version = defaultVersion
+
+func main() {
 	fs := flag.NewFlagSet("serve", flag.ContinueOnError)
 	fs.SetOutput(os.Stderr)
 	repoPath := fs.String("repo", "", "path to git repository (default: current directory)")
 	addr := fs.String("addr", "127.0.0.1:9473", "HTTP listen address")
 	openBrowser := fs.Bool("open", false, "open the UI in the default browser")
-	if err := fs.Parse(args); err != nil {
-		return err
+	showVersion := fs.Bool("version", false, "print version and exit")
+	if err := fs.Parse(os.Args[1:]); err != nil {
+		os.Exit(2)
+	}
+	if *showVersion {
+		fmt.Printf("git-lore %s\n", version)
+		return
 	}
 
-	repo, err := loregit.Open(*repoPath)
+	if err := runServe(*repoPath, *addr, *openBrowser); err != nil {
+		fmt.Fprintf(os.Stderr, "git-lore serve: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+func runServe(repoPath, addr string, openBrowser bool) error {
+	repo, err := loregit.Open(repoPath)
 	if err != nil {
 		return err
 	}
@@ -35,15 +52,15 @@ func runServe(args []string) error {
 		return err
 	}
 
-	ln, err := net.Listen("tcp", *addr)
+	ln, err := net.Listen("tcp", addr)
 	if err != nil {
-		return fmt.Errorf("listen %s: %w", *addr, err)
+		return fmt.Errorf("listen %s: %w", addr, err)
 	}
 
-	url := "http://" + *addr + "/"
+	url := "http://" + addr + "/"
 	log.Printf("git-lore serve %s at %s", repo.Root, url)
 
-	if *openBrowser {
+	if openBrowser {
 		go func() {
 			time.Sleep(200 * time.Millisecond)
 			_ = openURL(url)
