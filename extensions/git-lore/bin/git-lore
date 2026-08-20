@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# git-lore — Git external command dispatcher (git lore <cmd>).
+# Layout: bin/git-lore + lib/git-lore/{*.sh,serve}
+set -euo pipefail
+
+# Resolve this script's directory (follow one level of symlink).
+_source="${BASH_SOURCE[0]}"
+if [[ -L "$_source" ]]; then
+  _source="$(readlink "$_source" 2>/dev/null || readlink -f "$_source" 2>/dev/null || echo "$_source")"
+fi
+_bin_dir="$(cd "$(dirname "$_source")" && pwd)"
+
+# Dev: extensions/git-lore/bin → ../lib/git-lore
+# Install: $PREFIX/bin → $PREFIX/lib/git-lore
+if [[ -d "$_bin_dir/../lib/git-lore" ]]; then
+  LIB="$(cd "$_bin_dir/../lib/git-lore" && pwd)"
+elif [[ -d "$_bin_dir/../libexec/git-lore" ]]; then
+  LIB="$(cd "$_bin_dir/../libexec/git-lore" && pwd)"
+else
+  printf 'git-lore: cannot find lib/git-lore next to %s\n' "$_bin_dir" >&2
+  exit 1
+fi
+
+cmd="${1:-help}"
+if [[ $# -gt 0 ]]; then
+  shift
+fi
+
+case "$cmd" in
+  serve)
+    serve_bin="$LIB/serve"
+    if [[ ! -x "$serve_bin" ]]; then
+      if [[ -x "${serve_bin}.exe" ]]; then
+        serve_bin="${serve_bin}.exe"
+      else
+        printf 'git-lore: serve binary not found at %s (run make build)\n' "$LIB/serve" >&2
+        exit 1
+      fi
+    fi
+    exec "$serve_bin" "$@"
+    ;;
+  version|--version|-V)
+    if [[ -x "$LIB/serve" ]]; then
+      exec "$LIB/serve" --version
+    elif [[ -x "$LIB/serve.exe" ]]; then
+      exec "$LIB/serve.exe" --version
+    else
+      printf 'git-lore (shell)\n'
+      exit 0
+    fi
+    ;;
+  help|--help|-h)
+    exec bash "$LIB/help.sh" "$@"
+    ;;
+  list|show|create|edit|export|delete|branch|remote)
+    script="$LIB/${cmd}.sh"
+    if [[ ! -f "$script" ]]; then
+      printf 'git-lore: missing script %s\n' "$script" >&2
+      exit 1
+    fi
+    exec bash "$script" "$@"
+    ;;
+  *)
+    printf 'git-lore: unknown command %q\n\n' "$cmd" >&2
+    bash "$LIB/help.sh" >&2
+    exit 2
+    ;;
+esac
