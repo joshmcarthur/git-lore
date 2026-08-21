@@ -17,8 +17,8 @@ Git conventions without requiring an agent.
 
 ```bash
 cd extensions/git-lore
-make install PREFIX=~/.local
-# ensure ~/.local/bin is on PATH
+make install
+# default PREFIX is $HOME/.local; ensure that bin dir is on PATH
 git lore help
 ```
 

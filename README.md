@@ -599,7 +599,7 @@ Optional Git plugin in [`extensions/git-lore`](extensions/git-lore). Not require
 
 ```bash
 cd extensions/git-lore
-make install PREFIX=~/.local   # or: make build && PATH=$PWD/bin:$PATH
+make install   # default PREFIX=$HOME/.local; or: make build && PATH=$PWD/bin:$PATH
 git lore list
 git lore serve --repo ../.. --open
 # listens on http://127.0.0.1:9473 by default
