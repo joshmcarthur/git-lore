@@ -115,10 +115,7 @@ fi
 # Isolated index — edit-lore skill step 6
 export GIT_INDEX_FILE="$index"
 git --git-dir="$git_dir_path" read-tree --empty
-(
-  cd "$dir"
-  git --git-dir="$git_dir_path" add -A .
-)
+git --git-dir="$git_dir_path" --work-tree="$dir" add -A .
 tree="$(git --git-dir="$git_dir_path" write-tree)"
 unset GIT_INDEX_FILE
 

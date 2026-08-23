@@ -251,7 +251,7 @@ git log --oneline "refs/lore/${WORK_ID}-remote"
 
 3. Suggest manual reconciliation:
    - read-lore for local version
-   - `git show refs/lore/${WORK_ID}-remote:plan.md` (and other files) for remote
+   - `git show "refs/lore/${WORK_ID}-remote:plan.md"` (and other files) for remote
    - edit-lore to curate a reconciled version
    - sync-lore push after reconciliation
 

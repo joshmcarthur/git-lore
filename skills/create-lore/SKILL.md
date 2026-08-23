@@ -129,7 +129,7 @@ This is local metadata only — it is not committed.
 git for-each-ref refs/lore --format='%(refname:short)'
 git log --oneline refs/lore/${WORK_ID}
 git ls-tree -r --name-only refs/lore/${WORK_ID}
-git show refs/lore/${WORK_ID}:plan.md
+git show "refs/lore/${WORK_ID}:plan.md"
 git config --get "branch.$(git branch --show-current).lore"
 git status
 ```

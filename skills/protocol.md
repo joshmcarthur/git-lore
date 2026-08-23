@@ -57,15 +57,14 @@ REF="refs/lore/<work-id>"
 COMMIT=$(git rev-parse "$REF")
 DIR=$(mktemp -d)
 INDEX=$(mktemp)
-GIT_DIR=$(git rev-parse --git-dir)
+GIT_DIR=$(git rev-parse --absolute-git-dir)
 
 git archive "$COMMIT" | tar -x -C "$DIR"
 # edit files in $DIR
 
 export GIT_INDEX_FILE="$INDEX"
 git --git-dir="$GIT_DIR" read-tree --empty
-cd "$DIR"
-git --git-dir="$GIT_DIR" add -A .
+git --git-dir="$GIT_DIR" --work-tree="$DIR" add -A .
 TREE=$(git --git-dir="$GIT_DIR" write-tree)
 unset GIT_INDEX_FILE
 
