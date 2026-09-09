@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.4](https://github.com/joshmcarthur/git-lore/compare/v0.1.3...v0.1.4) (2026-08-23)
+
+
+### Bug Fixes
+
+* stop documenting PREFIX=~/.local for make install ([#13](https://github.com/joshmcarthur/git-lore/issues/13)) ([414b856](https://github.com/joshmcarthur/git-lore/commit/414b856531818b89e84306ef9a1024740764d36b))
+* stop edit-lore from cd'ing into its temp export dir ([3c90e2c](https://github.com/joshmcarthur/git-lore/commit/3c90e2c7bce36827f1901fb1f6016adf0e0d9148))
+
 ## [0.1.3](https://github.com/joshmcarthur/git-lore/compare/v0.1.2...v0.1.3) (2026-08-20)
 
 
