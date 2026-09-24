@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strings"
 
@@ -11,6 +12,8 @@ import (
 // Handler serves the lore-explorer JSON API.
 type Handler struct {
 	Repo *loregit.Repo
+	// Editable enables write endpoints (serve --edit).
+	Editable bool
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {
@@ -51,6 +54,8 @@ func mapGitError(w http.ResponseWriter, err error) {
 	switch {
 	case err == nil:
 		return
+	case errors.Is(err, loregit.ErrConflict):
+		writeError(w, http.StatusConflict, err.Error())
 	case isBadRequest(err):
 		writeError(w, http.StatusBadRequest, err.Error())
 	case isNotFound(err):
@@ -71,6 +76,9 @@ func (h *Handler) Mount(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/works/{id}/commits/{sha}", h.handleCommit)
 	mux.HandleFunc("GET /api/remote/status", h.handleRemoteStatus)
 	mux.HandleFunc("POST /api/remote/fetch", h.handleRemoteFetch)
+	if h.Editable {
+		mux.HandleFunc("PUT /api/works/{id}/files/{path...}", h.handleWriteFile)
+	}
 }
 
 func (h *Handler) handleRepo(w http.ResponseWriter, r *http.Request) {
@@ -79,7 +87,10 @@ func (h *Handler) handleRepo(w http.ResponseWriter, r *http.Request) {
 		mapGitError(w, err)
 		return
 	}
-	writeJSON(w, http.StatusOK, info)
+	writeJSON(w, http.StatusOK, struct {
+		loregit.RepoInfo
+		Editable bool `json:"editable"`
+	}{info, h.Editable})
 }
 
 func (h *Handler) handleBranchAssociations(w http.ResponseWriter, r *http.Request) {
@@ -184,4 +195,26 @@ func (h *Handler) handleRemoteFetch(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	writeJSON(w, http.StatusOK, result)
+}
+
+type writeFileRequest struct {
+	Content    string `json:"content"`
+	Message    string `json:"message"`
+	BaseCommit string `json:"baseCommit"`
+}
+
+func (h *Handler) handleWriteFile(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	path := r.PathValue("path")
+	var req writeFileRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid JSON body")
+		return
+	}
+	commit, err := h.Repo.WriteFile(id, path, req.Content, req.Message, req.BaseCommit)
+	if err != nil {
+		mapGitError(w, err)
+		return
+	}
+	writeJSON(w, http.StatusOK, map[string]string{"commit": commit})
 }

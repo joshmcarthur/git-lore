@@ -39,7 +39,18 @@ func Open(dir string) (*Repo, error) {
 
 // Output runs git -C <root> with args and returns stdout.
 func (r *Repo) Output(args ...string) (string, error) {
+	return r.OutputWith(nil, "", args...)
+}
+
+// OutputWith runs git with extra environment variables and stdin content.
+func (r *Repo) OutputWith(env []string, stdin string, args ...string) (string, error) {
 	cmd := exec.Command(r.Git, append([]string{"-C", r.Root}, args...)...)
+	if env != nil {
+		cmd.Env = append(os.Environ(), env...)
+	}
+	if stdin != "" {
+		cmd.Stdin = strings.NewReader(stdin)
+	}
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
