@@ -10,6 +10,7 @@ export interface RepoInfo {
   root: string
   currentBranch: string
   remotes: string[]
+  editable: boolean
 }
 
 export interface WorkSummary {
@@ -61,6 +62,15 @@ export interface FetchResult {
   output: string
 }
 
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message)
+  }
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, init)
   if (!res.ok) {
@@ -71,7 +81,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     } catch {
       /* ignore */
     }
-    throw new Error(msg)
+    throw new ApiError(msg, res.status)
   }
   const ct = res.headers.get('content-type') || ''
   if (ct.includes('application/json')) {
@@ -101,6 +111,15 @@ export const api = {
     }
     return res.text()
   },
+  saveFile: (id: string, path: string, content: string, message: string, baseCommit: string) =>
+    request<{ commit: string }>(
+      `/api/works/${encodeURIComponent(id)}/files/${path.split('/').map(encodeURIComponent).join('/')}`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content, message, baseCommit }),
+      },
+    ),
   log: (id: string, limit = 20) =>
     request<CommitInfo[]>(`/api/works/${encodeURIComponent(id)}/log?limit=${limit}`),
   commit: (id: string, sha: string) =>

@@ -6,7 +6,8 @@ skills.
 
 **Architecture:**
 - Shell scripts under `lib/git-lore/` for create / edit / list / sync (skill-aligned Git plumbing)
-- Standalone Go binary `lib/git-lore/serve` for the read-only browser UI
+- Standalone Go binary `lib/git-lore/serve` for the browser UI (read-only by
+  default; `--edit` enables document editing)
 
 Skills under `skills/` remain the primary surface. This CLI mirrors the same
 Git conventions without requiring an agent.
@@ -43,7 +44,13 @@ git lore serve --repo ../.. --open
 ```
 
 Flags for `serve`: `--repo <path>`, `--addr host:port` (default
-`127.0.0.1:9473`), `--open`.
+`127.0.0.1:9473`), `--open`, `--edit`.
+
+`--edit` adds an Edit button to each document. Saving works like
+`git lore edit`: one commit on `refs/lore/<id>` with the rest of the tree
+unchanged. If the Work moved since the page loaded (for example an agent ran
+edit-lore), the save is refused rather than overwriting it. Write requests
+are only accepted from the server's own origin.
 
 ## Screenshots
 
@@ -71,7 +78,7 @@ Works sidebar:
 | `delete` | Delete `refs/lore/<id>` |
 | `branch` | List or set/unset `branch.*.lore` associations |
 | `remote` | `fetch`, `push`, `sync`, or `status` against a remote |
-| `serve` | Read-only Lore browser UI |
+| `serve` | Lore browser UI (read-only; `--edit` to edit documents) |
 
 Most commands accept `--repo <path>` (default: current directory).
 
@@ -96,10 +103,10 @@ git lore remote push --work-id my-work
 ## Scope
 
 **In:** list/show/create/edit/export/delete Works, branch associations,
-remote fetch/push/sync/status, browser UI for read-only exploration.
+remote fetch/push/sync/status, browser UI for exploration, opt-in document
+editing from `serve --edit`.
 
-**Out:** browser UI mutations (create/edit from `serve`); REST API write
-endpoints; automatic divergence merge; curation gate enforcement in CLI;
+**Out:** creating or deleting Works from `serve`; automatic divergence merge; curation gate enforcement in CLI;
 `--json` CLI output (use `git show refs/lore/<id>:file` or the serve API).
 
 ## Layout
@@ -110,7 +117,7 @@ lib/git-lore/
   *.sh                    # skill-aligned shell commands
   serve                   # Go binary (built by make)
 cmd/git-lore-serve/       # serve source
-internal/git/             # read layer for serve API only
+internal/git/             # git layer for the serve API
 ```
 
 ## Releases

@@ -26,6 +26,7 @@ func main() {
 	repoPath := fs.String("repo", "", "path to git repository (default: current directory)")
 	addr := fs.String("addr", "127.0.0.1:9473", "HTTP listen address")
 	openBrowser := fs.Bool("open", false, "open the UI in the default browser")
+	editable := fs.Bool("edit", false, "allow editing documents from the UI (commits to refs/lore/*)")
 	showVersion := fs.Bool("version", false, "print version and exit")
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		os.Exit(2)
@@ -35,19 +36,19 @@ func main() {
 		return
 	}
 
-	if err := runServe(*repoPath, *addr, *openBrowser); err != nil {
+	if err := runServe(*repoPath, *addr, *openBrowser, *editable); err != nil {
 		fmt.Fprintf(os.Stderr, "git-lore serve: %v\n", err)
 		os.Exit(1)
 	}
 }
 
-func runServe(repoPath, addr string, openBrowser bool) error {
+func runServe(repoPath, addr string, openBrowser, editable bool) error {
 	repo, err := loregit.Open(repoPath)
 	if err != nil {
 		return err
 	}
 
-	handler, err := server.New(repo)
+	handler, err := server.New(repo, server.Options{Editable: editable, Addr: addr})
 	if err != nil {
 		return err
 	}
@@ -59,6 +60,9 @@ func runServe(repoPath, addr string, openBrowser bool) error {
 
 	url := "http://" + addr + "/"
 	log.Printf("git-lore serve %s at %s", repo.Root, url)
+	if editable {
+		log.Printf("editing enabled: saves commit to refs/lore/*")
+	}
 
 	if openBrowser {
 		go func() {

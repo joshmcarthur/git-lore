@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { onBeforeRouteUpdate, useRoute, useRouter } from 'vue-router'
 import {
   api,
+  ApiError,
   type BranchAssociation,
   type CommitDetail,
   type CommitInfo,
@@ -39,6 +40,16 @@ const commits = ref<CommitInfo[]>([])
 const selectedCommit = ref<CommitDetail | null>(null)
 const detailError = ref('')
 const detailLoading = ref(false)
+
+const editing = ref(false)
+const draft = ref('')
+const commitMessage = ref('')
+const saving = ref(false)
+const saveError = ref('')
+const conflict = ref(false)
+
+const canEdit = computed(() => !!repo.value?.editable && !!filePath.value)
+const dirty = computed(() => editing.value && draft.value !== fileContent.value)
 
 const currentWorkId = computed(() => {
   if (!repo.value) return ''
@@ -142,6 +153,62 @@ async function loadWork(id: string) {
   }
 }
 
+function startEditing() {
+  selectedCommit.value = null
+  draft.value = fileContent.value
+  commitMessage.value = ''
+  saveError.value = ''
+  conflict.value = false
+  editing.value = true
+}
+
+function stopEditing() {
+  editing.value = false
+  saveError.value = ''
+  conflict.value = false
+}
+
+function cancelEditing() {
+  if (dirty.value && !window.confirm('Discard unsaved changes?')) return
+  stopEditing()
+}
+
+async function save() {
+  if (!workId.value || !filePath.value || saving.value) return
+  saving.value = true
+  saveError.value = ''
+  conflict.value = false
+  try {
+    await api.saveFile(
+      workId.value,
+      filePath.value,
+      draft.value,
+      commitMessage.value.trim() || `lore: update ${filePath.value}`,
+      workCommit.value,
+    )
+    stopEditing()
+    await loadWork(workId.value)
+    works.value = await api.works()
+  } catch (e) {
+    conflict.value = e instanceof ApiError && e.status === 409
+    saveError.value = e instanceof Error ? e.message : String(e)
+  } finally {
+    saving.value = false
+  }
+}
+
+async function reloadDiscardingDraft() {
+  stopEditing()
+  await loadWork(workId.value)
+}
+
+function onEditorKeydown(e: KeyboardEvent) {
+  if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+    e.preventDefault()
+    void save()
+  }
+}
+
 async function selectCommit(sha: string) {
   if (!workId.value) return
   detailError.value = ''
@@ -161,6 +228,17 @@ onMounted(async () => {
   await refreshStatus()
   if (workId.value) await loadWork(workId.value)
 })
+
+onBeforeRouteUpdate(() => {
+  if (dirty.value && !window.confirm('Discard unsaved changes?')) return false
+  stopEditing()
+})
+
+function onBeforeUnload(e: BeforeUnloadEvent) {
+  if (dirty.value) e.preventDefault()
+}
+onMounted(() => window.addEventListener('beforeunload', onBeforeUnload))
+onBeforeUnmount(() => window.removeEventListener('beforeunload', onBeforeUnload))
 
 watch(
   () => [route.params.id, route.params.path],
@@ -273,14 +351,48 @@ watch(selectedRemote, () => {
           </nav>
 
           <section class="content">
+            <div v-if="editing && !selectedCommit" class="editor">
+              <div class="editor-toolbar">
+                <span class="editor-path">Editing {{ filePath }}</span>
+                <input
+                  v-model="commitMessage"
+                  class="commit-message"
+                  type="text"
+                  :placeholder="`lore: update ${filePath}`"
+                  @keydown="onEditorKeydown"
+                />
+                <button :disabled="saving" @click="cancelEditing">Cancel</button>
+                <button class="primary" :disabled="saving || !dirty" @click="save">
+                  {{ saving ? 'Saving…' : 'Save' }}
+                </button>
+              </div>
+              <div v-if="saveError" class="warn-banner">
+                <template v-if="conflict">
+                  This Work changed since you opened it. Copy your edits if you need them, then
+                  <button @click="reloadDiscardingDraft">Reload latest</button>
+                </template>
+                <template v-else>{{ saveError }}</template>
+              </div>
+              <textarea
+                v-model="draft"
+                class="editor-text"
+                spellcheck="false"
+                @keydown="onEditorKeydown"
+              />
+            </div>
             <CommitDiff
-              v-if="selectedCommit"
+              v-else-if="selectedCommit"
               :subject="selectedCommit.subject"
               :body="selectedCommit.body"
               :sha="selectedCommit.sha"
               :diff="selectedCommit.diff"
             />
-            <MarkdownView v-else-if="fileContent" :source="fileContent" />
+            <template v-else-if="fileContent || canEdit">
+              <div v-if="canEdit" class="content-actions">
+                <button @click="startEditing">Edit</button>
+              </div>
+              <MarkdownView :source="fileContent" />
+            </template>
             <div v-else class="empty">No document selected.</div>
           </section>
 
